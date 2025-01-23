@@ -1,13 +1,10 @@
 from PyQt6.QtWidgets import ( 
     QApplication, 
     QMainWindow, 
-    QPushButton,
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
-    QGridLayout,
-    QLabel,
-    QCheckBox
+    QSplitter
 )
 
 import sys
@@ -20,15 +17,29 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.file_path = ""
-        central_widget = QWidget()
-        
-        main_layout = QHBoxLayout()
-        right_panel_layout = QVBoxLayout()
-        right_panel_layout.addWidget(WireListView()), right_panel_layout.addWidget(UnusedListView()), right_panel_layout.addWidget(GroundListView())
-        main_layout.addWidget(SchematicView(self.file_path))
-        left_panel = SchematicView(self.file_path)
-        main_layout.addWidget(left_panel), main_layout.addLayout(right_panel_layout)
 
+        central_widget = QWidget()
+        self.setWindowTitle("Schematic Test Converter")
+        self.resize(1000, 500)
+
+        main_layout = QHBoxLayout()
+
+        left_panel = SchematicView()
+        right_panel_layout = QVBoxLayout()
+        right_panel_layout.addWidget(WireListView())
+        right_panel_layout.addWidget(UnusedListView())
+        right_panel_layout.addWidget(GroundListView())
+        right_panel_layout.addStretch()
+        right_panel = QWidget()
+        right_panel.setLayout(right_panel_layout)
+        
+        splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.addWidget(left_panel)
+        splitter.addWidget(right_panel)
+        splitter.setStretchFactor(0, 3)
+        splitter.setStretchFactor(1, 1)
+        
+        main_layout.addWidget(splitter)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
