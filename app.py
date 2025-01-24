@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         self.file_path = ""
 
         central_widget = QWidget()
-        self.setWindowTitle("Schematic Test Converter")
+        self.setWindowTitle("New Project")
         self.resize(1000, 600)
 
         main_layout = QHBoxLayout()
@@ -52,18 +52,25 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.splitter)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
+
+        menu = self.menuBar()
+        file_menu = menu.addMenu("&File")
+        import_menu = menu.addMenu("&Import")
+        export_menu = menu.addMenu("&Export")
     
     def rearrange(self):
         if self.schematic.show_check_box.isChecked():
             self.splitter.setOrientation(Qt.Orientation.Horizontal)
+            self.splitter.setSizes([400, 100])
+            self.splitter.setStretchFactor(0, 2)
+            self.splitter.setStretchFactor(1, 1)
+            self.resize(1000, 600)
+        else:
+            self.splitter.setOrientation(Qt.Orientation.Vertical)
             self.splitter.setSizes([100, 1000])
             self.splitter.setStretchFactor(0, 1)
             self.splitter.setStretchFactor(1, 10)
-            self.resize(1000, 400)
-        else:
-            self.splitter.setOrientation(Qt.Orientation.Vertical)
-            self.splitter.setSizes([400, 100])
-            self.resize(400, 600)
+            self.resize(300, 600)
 
 app = QApplication(sys.argv)
 window = MainWindow()

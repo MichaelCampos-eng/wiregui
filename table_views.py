@@ -90,6 +90,7 @@ class TableView(QWidget):
             self.component_list.step(self.user_input_box.text())
             self.model = PandasModel(self.component_list.get_table_df())
             self.table_view.setModel(self.model)
+            self.table_view.scrollToBottom()
         except ValueError as e:
             QMessageBox.critical(self, "Input List Error", str(e))             
             pass

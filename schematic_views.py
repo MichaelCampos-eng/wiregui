@@ -25,12 +25,12 @@ class SchematicView(QWidget):
         layout = QVBoxLayout()
 
         display_layout = QHBoxLayout()
-        self.project_name = QLabel("Project")
+        project_name = QLabel("Schematic")
         toggle_name = QLabel("Show")
         self.show_check_box = QCheckBox()
         self.show_check_box.setChecked(True)
         self.show_check_box.clicked.connect(self.__toggle_img__)
-        display_layout.addWidget(self.project_name)
+        display_layout.addWidget(project_name)
         display_layout.addStretch()
         display_layout.addWidget(toggle_name)
         display_layout.addWidget(self.show_check_box)
@@ -61,8 +61,7 @@ class SchematicView(QWidget):
         self.setLayout(layout)
 
     def import_schematic(self, file_path: str):
-        name = os.path.splitext(file_path.split("/")[-1])[0]
-        self.project_name.setText(name)
+        # name = os.path.splitext(file_path.split("/")[-1])[0]
         self.pil_imgs = convert_from_path(file_path)
         self.index = 0
         self.scale_factor = 1.0
@@ -136,5 +135,4 @@ class SchematicView(QWidget):
     
     def zoom_out(self):
         self.scale_factor = max(0.9, self.scale_factor/1.1)
-        print(self.scale_factor)
         self.new_image_show()
