@@ -20,32 +20,52 @@ class MainWindow(QMainWindow):
 
         central_widget = QWidget()
         self.setWindowTitle("Schematic Test Converter")
-        self.resize(1000, 500)
+        self.resize(1000, 600)
 
         main_layout = QHBoxLayout()
 
-        left_panel = SchematicView()
+
+        left_panel_layout = QVBoxLayout()
+        self.schematic = SchematicView()
+        self.schematic.import_schematic("schem.pdf")
+        left_panel_layout.addWidget(self.schematic)
         right_panel_layout = QVBoxLayout()
         right_panel_layout.addWidget(WireListView())
         right_panel_layout.addWidget(UnusedListView())
         right_panel_layout.addWidget(GroundListView())
         right_panel_layout.addStretch()
-        right_panel = QWidget()
-        right_panel.setLayout(right_panel_layout)
+
+        left_panel_widget = QWidget()
+        left_panel_widget.setLayout(left_panel_layout)
+        right_panel_widget = QWidget()
+        right_panel_widget.setLayout(right_panel_layout)
+
+        self.schematic.show_check_box.clicked.connect(self.rearrange)
         
-        splitter = QSplitter(Qt.Orientation.Horizontal)
-        splitter.addWidget(left_panel)
-        splitter.addWidget(right_panel)
-        splitter.setStretchFactor(0, 3)
-        splitter.setStretchFactor(1, 1)
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
+        self.splitter.addWidget(left_panel_widget)
+        self.splitter.addWidget(right_panel_widget)
+        self.splitter.setSizes([400, 100])
+        self.splitter.setStretchFactor(0, 2)
+        self.splitter.setStretchFactor(1, 1)
         
-        main_layout.addWidget(splitter)
+        main_layout.addWidget(self.splitter)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
+    
+    def rearrange(self):
+        if self.schematic.show_check_box.isChecked():
+            self.splitter.setOrientation(Qt.Orientation.Horizontal)
+            self.splitter.setSizes([100, 1000])
+            self.splitter.setStretchFactor(0, 1)
+            self.splitter.setStretchFactor(1, 10)
+            self.resize(1000, 400)
+        else:
+            self.splitter.setOrientation(Qt.Orientation.Vertical)
+            self.splitter.setSizes([400, 100])
+            self.resize(400, 600)
 
 app = QApplication(sys.argv)
-
 window = MainWindow()
 window.show()
-
 app.exec()
