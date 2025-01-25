@@ -15,7 +15,7 @@ from PIL import ImageQt, Image
 import os
 
 class SchematicView(QWidget):
-    #File_path should point to a pdf convert it some images
+
     def __init__(self):
         super().__init__()
         self.index = 0

@@ -9,55 +9,19 @@ from PyQt6.QtWidgets import (
     QHeaderView,
     QMessageBox
 )
-from PyQt6.QtCore import Qt, QModelIndex, QAbstractTableModel
-from PyQt6.QtGui import QStandardItemModel, QStandardItem
+from pandas_model import *
+from list_view_model import *
 
-import sys
-from wrman.converter.ditmco_test import *
-from wrman.pin_management.list_manager import *
-
-class PandasModel(QAbstractTableModel):
-
-    def __init__(self, dataframe: pd.DataFrame, parent=None):
-        QAbstractTableModel.__init__(self, parent)
-        self._dataframe = dataframe
-
-    def rowCount(self, parent=QModelIndex()) -> int:
-        if parent == QModelIndex():
-            return len(self._dataframe)
-        return 0
-
-    def columnCount(self, parent=QModelIndex()) -> int:
-        if parent == QModelIndex():
-            return len(self._dataframe.columns)
-        return 0
-
-    def data(self, index: QModelIndex, role=Qt.ItemDataRole):
-        if not index.isValid():
-            return None
-        if role == Qt.ItemDataRole.DisplayRole:
-            return str(self._dataframe.iloc[index.row(), index.column()])
-        return None
-
-    def headerData(self, section: int, orientation: Qt.Orientation, role: Qt.ItemDataRole):
-        if role == Qt.ItemDataRole.DisplayRole:
-            if orientation == Qt.Orientation.Horizontal:
-                return str(self._dataframe.columns[section])
-            if orientation == Qt.Orientation.Vertical:
-                return str(self._dataframe.index[section])
-        return None
-
-class TableView(QWidget):
+class ListView(QWidget):
     
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
-        self.component_list: DitmcoList
-        self.__setup_comp_list__()
+        self.list_model = ListViewModel()
 
         main_layout = QVBoxLayout()
 
         header_layout = QHBoxLayout()
-        table_name = QLabel(self.component_list.get_list_name())
+        table_name = QLabel(self.list_model.get_name())
         table_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
         toggle_name = QLabel("Show")
         self.check_box = QCheckBox()
@@ -69,14 +33,14 @@ class TableView(QWidget):
         header_layout.addWidget(self.check_box)
 
         self.table_view = QTableView()
-        self.model = PandasModel(self.component_list.get_table_df())
+        self.model = PandasModel(self.list_model.get_table())
         self.table_view.setModel(self.model)
         self.table_view.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
 
         input_layout = QVBoxLayout()
         self.user_input_box = QLineEdit()
-        self.user_input_box.setPlaceholderText(self.component_list.fetch_curr_arg_name())
+        self.user_input_box.setPlaceholderText(self.list_model.get_placeholder())
         self.user_input_box.returnPressed.connect(self.__user_input__)
         input_layout.addWidget(self.user_input_box)
         
@@ -85,10 +49,23 @@ class TableView(QWidget):
         main_layout.addLayout(input_layout)
         self.setLayout(main_layout)
 
+        import_action = QAction(QIcon("open.png"), f"&Import {self.list_model.get_name()}", self)
+        import_action.setStatusTip(f"Import {self.list_model.get_name()}")
+        import_action.triggered.connect(self.list_model.import_list)
+        import_action.setCheckable(True)
+
+        export_action = QAction(QIcon("open.png"), f"&Export {self.list_model.get_name()}", self)
+        export_action.setStatusTip(f"Export {self.list_model.get_name()}")
+        export_action.triggered.connect(self.list_model.export_list)
+        export_action.setCheckable(True)
+
+        parent.import_menu.addAction(import_action)
+        parent.export_menu.addAction(export_action)
+
     def __user_input__(self):
         try:
-            self.component_list.step(self.user_input_box.text())
-            self.model = PandasModel(self.component_list.get_table_df())
+            self.table.step(self.user_input_box.text())
+            self.model = PandasModel(self.table.get_table_df())
             self.table_view.setModel(self.model)
             self.table_view.scrollToBottom()
         except ValueError as e:
@@ -98,34 +75,32 @@ class TableView(QWidget):
     
     def __input_placeholder__(self):
         self.user_input_box.clear()
-        self.user_input_box.setPlaceholderText(self.component_list.fetch_curr_arg_name())
+        self.user_input_box.setPlaceholderText(self.table.fetch_curr_arg_name())
 
     def __toggle_table__(self):
         self.table_view.show() if self.check_box.isChecked() else self.table_view.hide()
 
-    def __setup_comp_list__(self):
-        pass
-    
-class WireListView(TableView):
-    def __init__(self):
-        super().__init__()
+class WireListView(ListView):
+    def __init__(self, parent):
+        super().__init__(parent)
         
     def __setup_comp_list__(self):
-        self.component_list = WireList()
+        self.table = WireListViewModel()
         
-class UnusedListView(TableView):
-    def __init__(self):
-        super().__init__()
+class UnusedListView(ListView):
+    def __init__(self, parent):
+        super().__init__(parent)
     
     def __setup_comp_list__(self):
-        self.component_list = IsolatedList()
+        self.table = UnusedListViewModel()
     
     def __input_placeholder__(self):
-        self.user_input_box.setPlaceholderText(self.component_list.fetch_curr_arg_name())
+        self.user_input_box.setPlaceholderText(self.table.get_placeholder())
 
-class GroundListView(TableView):
-    def __init__(self):
-        super().__init__()
+class GroundListView(ListView):
+    def __init__(self, parent):
+        super().__init__(parent)
 
     def __setup_comp_list__(self):
-        self.component_list = GroundList()
+        self.table = GroundListViewModel()
+
