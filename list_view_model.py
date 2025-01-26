@@ -39,8 +39,11 @@ class ListViewModel():
         with open('config.yaml', 'r') as file:
             self.cfg = yaml.safe_load(file)
 
-    def get_table(self):
+    def get_df(self):
         return self.table.get_df()
+    
+    def append(self, arg):
+        self.table.step(arg)
     
     def get_name(self):
         return self.table.get_list_name()
@@ -53,6 +56,8 @@ class ListViewModel():
 
     def import_list(self):
         pass
+
+    
 
 class WireListViewModel(ListViewModel):
     def __init__(self):

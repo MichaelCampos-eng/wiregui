@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import (
     QToolBar
 )
 from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtCore import Qt
 
 import sys
 
@@ -23,7 +24,8 @@ class MainWindow(QMainWindow):
         central_widget = QWidget()
         self.setWindowTitle("New Project")
         self.resize(1000, 600)
-
+        self.__set_menu_bar__()
+    
         main_layout = QHBoxLayout()
 
         right_panel_widget = RightPanel(self)
@@ -41,6 +43,8 @@ class MainWindow(QMainWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
+        
+    def __set_menu_bar__(self):
         open_action = QAction(QIcon("open.png"), "&Open", self)
         open_action.setStatusTip("Open project")
         open_action.triggered.connect(self.open)

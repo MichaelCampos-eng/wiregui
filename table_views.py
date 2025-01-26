@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QHeaderView,
     QMessageBox
 )
+from PyQt6.QtGui import QAction, QIcon
 from pandas_model import *
 from list_view_model import *
 
@@ -16,7 +17,8 @@ class ListView(QWidget):
     
     def __init__(self, parent):
         super().__init__()
-        self.list_model = ListViewModel()
+        self.list_model: ListViewModel
+        self.__setup_list_model__()
 
         main_layout = QVBoxLayout()
 
@@ -33,7 +35,7 @@ class ListView(QWidget):
         header_layout.addWidget(self.check_box)
 
         self.table_view = QTableView()
-        self.model = PandasModel(self.list_model.get_table())
+        self.model = PandasModel(self.list_model.get_df())
         self.table_view.setModel(self.model)
         self.table_view.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
@@ -59,13 +61,14 @@ class ListView(QWidget):
         export_action.triggered.connect(self.list_model.export_list)
         export_action.setCheckable(True)
 
+    
         parent.import_menu.addAction(import_action)
         parent.export_menu.addAction(export_action)
 
     def __user_input__(self):
         try:
-            self.table.step(self.user_input_box.text())
-            self.model = PandasModel(self.table.get_table_df())
+            self.list_model.append(self.user_input_box.text())
+            self.model = PandasModel(self.list_model.get_df())
             self.table_view.setModel(self.model)
             self.table_view.scrollToBottom()
         except ValueError as e:
@@ -75,32 +78,35 @@ class ListView(QWidget):
     
     def __input_placeholder__(self):
         self.user_input_box.clear()
-        self.user_input_box.setPlaceholderText(self.table.fetch_curr_arg_name())
+        self.user_input_box.setPlaceholderText(self.list_model.get_placeholder())
 
     def __toggle_table__(self):
         self.table_view.show() if self.check_box.isChecked() else self.table_view.hide()
+
+    def __setup_list_model__(self):
+        pass
 
 class WireListView(ListView):
     def __init__(self, parent):
         super().__init__(parent)
         
-    def __setup_comp_list__(self):
-        self.table = WireListViewModel()
+    def __setup_list_model__(self):
+        self.list_model = WireListViewModel()
         
 class UnusedListView(ListView):
     def __init__(self, parent):
         super().__init__(parent)
     
-    def __setup_comp_list__(self):
-        self.table = UnusedListViewModel()
+    def __setup_list_model__(self):
+        self.list_model = UnusedListViewModel()
     
     def __input_placeholder__(self):
-        self.user_input_box.setPlaceholderText(self.table.get_placeholder())
+        self.user_input_box.setPlaceholderText(self.list_model.get_placeholder())
 
 class GroundListView(ListView):
     def __init__(self, parent):
         super().__init__(parent)
 
-    def __setup_comp_list__(self):
-        self.table = GroundListViewModel()
+    def __setup_list_model__(self):
+        self.list_model = GroundListViewModel()
 

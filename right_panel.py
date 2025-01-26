@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
 )
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QIcon
 from wrman.converter.ditmco_test import *
 from wrman.pin_management.list_manager import *
 from wrman.config_classes.config import Config
