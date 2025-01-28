@@ -1,0 +1,12 @@
+; Unused Pins Tests
+BTB, ISOLATION_TESTS
+T, 500V, >2M, 0.15T, 0.3s
+
+T-wer-1
+
+T-wer-2
+
+T-wer-3
+
+T-wer-4
+ETB, ISOLATION_TESTS

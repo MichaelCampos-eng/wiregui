@@ -7,7 +7,8 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QTableView,
     QHeaderView,
-    QMessageBox
+    QMessageBox,
+    QFileDialog
 )
 from PyQt6.QtGui import QAction, QIcon
 from pandas_model import *
@@ -53,12 +54,12 @@ class ListView(QWidget):
 
         import_action = QAction(QIcon("open.png"), f"&Import {self.list_model.get_name()}", self)
         import_action.setStatusTip(f"Import {self.list_model.get_name()}")
-        import_action.triggered.connect(self.list_model.import_list)
+        import_action.triggered.connect(self.__import_dialog__)
         import_action.setCheckable(True)
 
         export_action = QAction(QIcon("open.png"), f"&Export {self.list_model.get_name()}", self)
         export_action.setStatusTip(f"Export {self.list_model.get_name()}")
-        export_action.triggered.connect(self.list_model.export_list)
+        export_action.triggered.connect(self.__export_dialog__)
         export_action.setCheckable(True)
 
     
@@ -71,10 +72,9 @@ class ListView(QWidget):
             self.model = PandasModel(self.list_model.get_df())
             self.table_view.setModel(self.model)
             self.table_view.scrollToBottom()
+            self.__input_placeholder__()
         except ValueError as e:
-            QMessageBox.critical(self, "Input List Error", str(e))             
-            pass
-        self.__input_placeholder__()
+            QMessageBox.critical(self, "Input List Error", str(e))
     
     def __input_placeholder__(self):
         self.user_input_box.clear()
@@ -85,6 +85,24 @@ class ListView(QWidget):
 
     def __setup_list_model__(self):
         pass
+
+    def __import_dialog__(self):
+        pass
+
+    def __export_dialog__(self):
+        dialog = QFileDialog(self)
+        file_path, _ = dialog.getSaveFileName(
+            self,
+            "Save File",
+            f"{self.list_model.get_name()}.ro",
+            "Text Files (*.ro);;All Files (*)"
+        )
+        self.list_model.set_file_path(file_path)
+        try:
+            self.list_model.export_list()
+        except ValueError as e:
+            QMessageBox.critical(self, "Error", str(e))             
+        
 
 class WireListView(ListView):
     def __init__(self, parent):
@@ -109,4 +127,3 @@ class GroundListView(ListView):
 
     def __setup_list_model__(self):
         self.list_model = GroundListViewModel()
-

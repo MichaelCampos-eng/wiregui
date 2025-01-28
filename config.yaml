@@ -1,4 +1,4 @@
-result_path: "./"
+results_path: "./"
 
 continuity_cfg:
   execute: True

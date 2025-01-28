@@ -10,11 +10,13 @@ class AggregateModel:
         self.unused_list_df = unused_list_df
         self.ground_list_df = ground_list_df
         self.cfg: Config
-        self.__set_config_fault__()
+        self.__set_config_default__()
 
-    def __set_config_fault__(self):
+    
+    def __set_config_default__(self):
         with open('config.yaml', 'r') as file:
-            self.cfg = yaml.safe_load(file)
+            cfg = yaml.safe_load(file)
+            self.cfg = Config(**cfg)
 
     def export_lists(self):
         txt = AggregateRo(self.cfg,
@@ -33,11 +35,12 @@ class ListViewModel():
     def __init__(self):
         self.table: DitmcoList = None
         self.cfg: Config = None
-        self.__set_config_fault__()
+        self.__set_config_default__()
 
-    def __set_config_fault__(self):
-        with open('config.yaml', 'r') as file:
-            self.cfg = yaml.safe_load(file)
+    def __set_config_default__(self):
+        with open("config.yaml", 'r') as file:
+            cfg = yaml.safe_load(file)
+            self.cfg = Config(**cfg)
 
     def get_df(self):
         return self.table.get_df()
@@ -57,7 +60,8 @@ class ListViewModel():
     def import_list(self):
         pass
 
-    
+    def set_file_path(self, path):
+        self.cfg.results_path = path
 
 class WireListViewModel(ListViewModel):
     def __init__(self):
@@ -65,8 +69,11 @@ class WireListViewModel(ListViewModel):
         self.table = WireList()
     
     def export_list(self):
-        test = WireListRo(self.cfg, self.table.get_df())
-        test.export_test()
+        try:
+            test = WireListRo(self.cfg, self.table.get_df())
+            test.export_test()
+        except ValueError as e:
+            raise e
 
     def import_list(self):
         pass
@@ -77,9 +84,12 @@ class UnusedListViewModel(ListViewModel):
         self.table = IsolatedList()
     
     def export_list(self):
-        test = UnusedListRo(self.cfg, self.table.get_df())
-        test.export_test()
-
+        try:
+            test = UnusedListRo(self.cfg, self.table.get_df())
+            test.export_test()
+        except ValueError as e:
+            raise e
+        
     def import_list(self):
         pass
 
@@ -89,8 +99,11 @@ class GroundListViewModel(ListViewModel):
         self.table = GroundList()
     
     def export_list(self):
-        test = GroundListRo(self.cfg, self.table.get_df())
-        test.export_test()
-    
+        try:
+            test = GroundListRo(self.cfg, self.table.get_df())
+            test.export_test()
+        except ValueError as e:
+            raise e
+         
     def import_list(self):
         pass

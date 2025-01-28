@@ -1,0 +1,44 @@
+; Wire List Tests
+BTB, CONTINUITY_TESTS
+C, 0.1A, <2R, 0.01s
+
+X-qwe-2
+C-we-2
+
+X-sdg-2
+C-sdfg-3
+
+X-sf3-3
+C-sef-3
+
+ETB, CONTINUITY_TESTS
+BTB, CONTINUITY_TESTS
+C, 0.1A, <2R, 0.01s
+
+F-qwe-2
+
+F-sdfg-3
+
+F-sdg-2
+
+F-sef-3
+
+F-sf3-3
+
+F-we-2
+ETB, CONTINUITY_TESTS
+BTB, CONTINUITY_TESTS
+C, 0.1A, <2R, 0.01s
+
+D-qwe-2
+
+D-sdfg-3
+
+D-sdg-2
+
+D-sef-3
+
+D-sf3-3
+
+D-we-2
+ETB, CONTINUITY_TESTS
