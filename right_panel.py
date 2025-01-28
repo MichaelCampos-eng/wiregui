@@ -15,12 +15,28 @@ class RightPanel(QWidget):
 
     def __init__(self, parent):
         super().__init__()
-        self.wire_list_view = WireListView(parent)
-        self.unused_list_view = UnusedListView(parent)
-        self.ground_list_view = GroundListView(parent)
-        self.agg_model = AggregateModel(self.wire_list_view.list_model.table,
-                                        self.unused_list_view.list_model.table,
-                                        self.ground_list_view.list_model.table)
+
+        self.csv_import_menu = parent.import_menu.addMenu("&Spreadsheet (.csv)")
+        self.csv_export_menu = parent.export_menu.addMenu("&Spreadsheet (.csv)")
+        self.test_export_menu = parent.export_menu.addMenu("&Test (.ro)")
+
+        test_export_action = QAction(QIcon("open.png"), "&All", self)
+        test_export_action.setStatusTip(f"Export test scrips all")
+        test_export_action.triggered.connect(self.__export_tests_dialog__)
+        
+        table_export_action = QAction(QIcon("open.png"), "&All", self)
+        table_export_action.setStatusTip(f"Export spreadsheets all")
+        table_export_action.triggered.connect(self.__export_csvs_dialog__)
+
+        self.csv_export_menu.addAction(table_export_action)
+        self.test_export_menu.addAction(test_export_action)
+
+        self.wire_list_view = WireListView(self)
+        self.unused_list_view = UnusedListView(self)
+        self.ground_list_view = GroundListView(self)
+        self.agg_model = AggregateModel(self.wire_list_view.list_model,
+                                        self.unused_list_view.list_model,
+                                        self.ground_list_view.list_model)
 
         right_panel_layout = QVBoxLayout()
         right_panel_layout.addWidget(self.wire_list_view)
@@ -30,17 +46,23 @@ class RightPanel(QWidget):
 
         self.setLayout(right_panel_layout)
 
-        import_action = QAction(QIcon("open.png"), "&Import All", self)
-        import_action.setStatusTip(f"Import all lists")
-        import_action.triggered.connect(self.agg_model.import_lists)
-        import_action.setCheckable(True)
+    def __export_csvs_dialog__(self):
+        dialog = QFileDialog(self)
+        folder_path = dialog.getExistingDirectory(self, "Select Folder")
+        try:
+            self.agg_model.set_file_path(folder_path)
+            self.agg_model.export_spreadsheets()
+        except ValueError as e:
+            QMessageBox.critical(self, "Error", str(e))
 
-        export_action = QAction(QIcon("open.png"), "&Export All", self)
-        export_action.setStatusTip(f"Export all lists")
-        export_action.triggered.connect(self.agg_model.export_lists)
-        export_action.setCheckable(True)
-
-        parent.import_menu.addAction(import_action)
-        parent.export_menu.addAction(export_action)
-    
-    
+    def __export_tests_dialog__(self):
+        dialog = QFileDialog(self)
+        file_path, _ = dialog.getSaveFileName(self,
+                                              "Save File",
+                                              f"{self.agg_model.get_name()}.ro",
+                                              "RO Files (*.ro)")
+        try:
+            self.agg_model.set_file_path(file_path)
+            self.agg_model.export_tests()
+        except ValueError as e:
+            QMessageBox.critical(self, "Error", str(e))

@@ -52,19 +52,21 @@ class ListView(QWidget):
         main_layout.addLayout(input_layout)
         self.setLayout(main_layout)
 
-        import_action = QAction(QIcon("open.png"), f"&Import {self.list_model.get_name()}", self)
-        import_action.setStatusTip(f"Import {self.list_model.get_name()}")
-        import_action.triggered.connect(self.__import_dialog__)
-        import_action.setCheckable(True)
+        import_csv_action = QAction(QIcon("open.png"), f"&{self.list_model.get_name()}", self)
+        import_csv_action.setStatusTip(f"Export {self.list_model.get_name()}")
+        import_csv_action.triggered.connect(self.__import_csv_dialog__)    
 
-        export_action = QAction(QIcon("open.png"), f"&Export {self.list_model.get_name()}", self)
-        export_action.setStatusTip(f"Export {self.list_model.get_name()}")
-        export_action.triggered.connect(self.__export_dialog__)
-        export_action.setCheckable(True)
+        export_csv_action = QAction(QIcon("open.png"), f"&{self.list_model.get_name()}", self)
+        export_csv_action.setStatusTip(f"Export test script {self.list_model.get_name()}")
+        export_csv_action.triggered.connect(self.__export_csv_dialog__)
 
-    
-        parent.import_menu.addAction(import_action)
-        parent.export_menu.addAction(export_action)
+        export_test_action = QAction(QIcon("open.png"), f"&{self.list_model.get_name()}", self)
+        export_test_action.setStatusTip(f"Export test script {self.list_model.get_name()}")
+        export_test_action.triggered.connect(self.__export_test_dialog__)
+
+        parent.csv_import_menu.addAction(import_csv_action)
+        parent.csv_export_menu.addAction(export_csv_action)
+        parent.test_export_menu.addAction(export_test_action)
 
     def __user_input__(self):
         try:
@@ -86,20 +88,42 @@ class ListView(QWidget):
     def __setup_list_model__(self):
         pass
 
-    def __import_dialog__(self):
-        pass
-
-    def __export_dialog__(self):
+    def __import_csv_dialog__(self):
         dialog = QFileDialog(self)
-        file_path, _ = dialog.getSaveFileName(
-            self,
-            "Save File",
-            f"{self.list_model.get_name()}.ro",
-            "Text Files (*.ro);;All Files (*)"
-        )
+
+        dialog.getOpenFileName()
+
+        file_path, _ = dialog.getOpenFileName(self,
+                                              "Open File",
+                                              "",
+                                              "CSV Files (*.csv)")
         self.list_model.set_file_path(file_path)
         try:
-            self.list_model.export_list()
+            self.list_model.import_spreadsheet()
+        except ValueError as e:
+            QMessageBox.critical(self, "Error", str(e))
+
+    def __export_csv_dialog__(self):
+        dialog = QFileDialog(self)
+        file_path, _ = dialog.getSaveFileName(self,
+                                              "Save File",
+                                              f"{self.list_model.get_name()}.csv",
+                                              "csv Files (*.csv))")
+        self.list_model.set_file_path(file_path)
+        try:
+            self.list_model.export_spreadsheet()
+        except ValueError as e:
+            QMessageBox.critical(self, "Error", str(e))
+
+    def __export_test_dialog__(self):
+        dialog = QFileDialog(self)
+        file_path, _ = dialog.getSaveFileName(self,
+                                              "Save File",
+                                              f"{self.list_model.get_name()}.ro",
+                                              "RO Files (*.ro)")
+        self.list_model.set_file_path(file_path)
+        try:
+            self.list_model.export_test()
         except ValueError as e:
             QMessageBox.critical(self, "Error", str(e))             
         

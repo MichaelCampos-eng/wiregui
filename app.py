@@ -55,6 +55,8 @@ class MainWindow(QMainWindow):
         file_menu.addAction(open_action)
         self.import_menu = menu.addMenu("&Import")
         self.export_menu = menu.addMenu("&Export")
+
+        self.import_menu.addSection
         
 
     def open(self):

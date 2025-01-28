@@ -2,11 +2,7 @@
 BTB, ISOLATION_TESTS
 T, 500V, >2M, 0.15T, 0.3s
 
-T-wer-1
+T-P660-9
 
-T-wer-2
-
-T-wer-3
-
-T-wer-4
+T-P660-10
 ETB, ISOLATION_TESTS

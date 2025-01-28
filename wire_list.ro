@@ -2,43 +2,32 @@
 BTB, CONTINUITY_TESTS
 C, 0.1A, <2R, 0.01s
 
-X-qwe-2
-C-we-2
+X-J601-20
+C-P602-J
 
-X-sdg-2
-C-sdfg-3
-
-X-sf3-3
-C-sef-3
+X-J601-21
+C-P602-K
 
 ETB, CONTINUITY_TESTS
 BTB, CONTINUITY_TESTS
 C, 0.1A, <2R, 0.01s
 
-F-qwe-2
+F-J601-20
 
-F-sdfg-3
+F-J601-21
 
-F-sdg-2
+F-P602-J
 
-F-sef-3
-
-F-sf3-3
-
-F-we-2
+F-P602-K
 ETB, CONTINUITY_TESTS
 BTB, CONTINUITY_TESTS
 C, 0.1A, <2R, 0.01s
 
-D-qwe-2
+D-J601-20
 
-D-sdfg-3
+D-J601-21
 
-D-sdg-2
+D-P602-J
 
-D-sef-3
-
-D-sf3-3
-
-D-we-2
+D-P602-K
 ETB, CONTINUITY_TESTS
