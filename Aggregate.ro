@@ -1,0 +1,38 @@
+; Wire List Tests
+BTB, CONTINUITY_TESTS
+C, 0.1A, <2R, 0.01s
+X-dsgds-2
+C-kj;;k2-3
+X-jk;kj-3
+C-;kjbkb-1
+ETB, CONTINUITY_TESTS
+BTB, CONTINUITY_TESTS
+C, 0.1A, <2R, 0.01s
+F-;kjbkb-nan
+F-dsgds-2
+F-jk;kj-3
+F-kj;;k2-nan
+ETB, CONTINUITY_TESTS
+BTB, CONTINUITY_TESTS
+C, 0.1A, <2R, 0.01s
+D-;kjbkb-1
+D-dsgds-2
+D-jk;kj-3
+D-kj;;k2-3
+ETB, CONTINUITY_TESTS
+; Unused Pins Tests
+BTB, ISOLATION_TESTS
+T, 500V, >2M, 0.15T, 0.3s
+T-ok-1
+T-ok-2
+T-ok-3
+T-ok-d
+ETB, ISOLATION_TESTS
+; Ground Tests
+BTB, CONTINUITY_TESTS
+C, 0.1A, <2R, 0.01s
+X-j1
+CV-j2
+CV-j3
+C-j4
+ETB, CONTINUITY_TESTS

@@ -2,10 +2,8 @@ from PyQt6.QtWidgets import (
     QApplication, 
     QMainWindow, 
     QWidget,
-    QVBoxLayout,
     QHBoxLayout,
     QSplitter,
-    QToolBar
 )
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import Qt

@@ -1,9 +1,10 @@
-from wrman.pin_management.list_manager import *
+from wrman.conn_management.list_manager import *
 from wrman.config_classes.config import *
 from wrman.converter.ditmco_test import *
-import yaml
+from omegaconf import OmegaConf
 
 class ListViewModel():
+
     def __init__(self):
         self.table: DitmcoList = None
         self.cfg: Config = None
@@ -11,9 +12,8 @@ class ListViewModel():
 
     def __set_config_default__(self):
         with open("config.yaml", 'r') as file:
-            cfg = yaml.safe_load(file)
-            self.cfg = Config(**cfg)
-
+            self.cfg = OmegaConf.load(file)
+            
     def get_df(self):
         return self.table.get_df()
     
@@ -24,7 +24,7 @@ class ListViewModel():
         return self.table.get_list_name()
     
     def get_placeholder(self):
-        return self.table.fetch_curr_arg_name()
+        return self.table.fetch_hint_txt()
 
     def export_test(self):
         pass
@@ -107,8 +107,7 @@ class AggregateModel:
 
     def __set_config_default__(self):
         with open('config.yaml', 'r') as file:
-            cfg = yaml.safe_load(file)
-            self.cfg = Config(**cfg)
+            self.cfg = OmegaConf.load(file)
     
     def export_spreadsheets(self):
         try:

@@ -1,33 +1,35 @@
 ; Wire List Tests
 BTB, CONTINUITY_TESTS
 C, 0.1A, <2R, 0.01s
-
-X-J601-20
-C-P602-J
-
-X-J601-21
-C-P602-K
-
+X-jh3-2
+C-jkh3-3
+X-jj-1
+C-kk-2
+X-jkhl1-2
+C-lgj4-3
+X-kjhkj-2
+C-kjhkjh-3
 ETB, CONTINUITY_TESTS
-BTB, CONTINUITY_TESTS
-C, 0.1A, <2R, 0.01s
+BTB, LEAKAGE_TESTS
+T 500V ROFF >10M 0.010T 0.020S
+F-jh3-2
+F-jj-1
+F-jkh3-nan
+F-jkhl1-2
+F-kjhkj-2
+F-kjhkjh-nan
+F-kk-nan
+F-lgj4-nan
+ETB, LEAKAGE_TESTS
+BTB, HIPOT_TESTS
+D HIP 500V 0.5MA ROFF 0.010T 0.020S
+D-jh3-2
+D-jj-1
+D-jkh3-3
+D-jkhl1-2
+D-kjhkj-2
+D-kjhkjh-3
+D-kk-2
+D-lgj4-3
+ETB, HIPOT_TESTS
 
-F-J601-20
-
-F-J601-21
-
-F-P602-J
-
-F-P602-K
-ETB, CONTINUITY_TESTS
-BTB, CONTINUITY_TESTS
-C, 0.1A, <2R, 0.01s
-
-D-J601-20
-
-D-J601-21
-
-D-P602-J
-
-D-P602-K
-ETB, CONTINUITY_TESTS
