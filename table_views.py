@@ -90,42 +90,44 @@ class ListView(QWidget):
 
     def __import_csv_dialog__(self):
         dialog = QFileDialog(self)
-
-        dialog.getOpenFileName()
-
         file_path, _ = dialog.getOpenFileName(self,
-                                              "Open File",
+                                              "Open spreadsheet",
                                               "",
                                               "CSV Files (*.csv)")
-        self.list_model.set_file_path(file_path)
-        try:
-            self.list_model.import_spreadsheet()
-        except ValueError as e:
-            QMessageBox.critical(self, "Error", str(e))
+        if file_path:
+            try:
+                self.list_model.set_file_path(file_path)
+                self.list_model.import_spreadsheet()
+                self.model = PandasModel(self.list_model.get_df())
+                self.table_view.setModel(self.model)
+            except ValueError as e:
+                QMessageBox.critical(self, "Error", str(e))
 
     def __export_csv_dialog__(self):
         dialog = QFileDialog(self)
         file_path, _ = dialog.getSaveFileName(self,
-                                              "Save File",
+                                              "Save spreadsheet",
                                               f"{self.list_model.get_name()}.csv",
                                               "csv Files (*.csv))")
-        self.list_model.set_file_path(file_path)
-        try:
-            self.list_model.export_spreadsheet()
-        except ValueError as e:
-            QMessageBox.critical(self, "Error", str(e))
+        if file_path:
+            try:
+                self.list_model.set_file_path(file_path)
+                self.list_model.export_spreadsheet()
+            except ValueError as e:
+                QMessageBox.critical(self, "Error", str(e))
 
     def __export_test_dialog__(self):
         dialog = QFileDialog(self)
         file_path, _ = dialog.getSaveFileName(self,
-                                              "Save File",
+                                              "Save test script",
                                               f"{self.list_model.get_name()}.ro",
                                               "RO Files (*.ro)")
-        self.list_model.set_file_path(file_path)
-        try:
-            self.list_model.export_test()
-        except ValueError as e:
-            QMessageBox.critical(self, "Error", str(e))             
+        if file_path:
+            try:
+                self.list_model.set_file_path(file_path)
+                self.list_model.export_test()
+            except ValueError as e:
+                QMessageBox.critical(self, "Error", str(e))             
         
 
 class WireListView(ListView):

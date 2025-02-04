@@ -1,8 +1,0 @@
-; Ground Tests
-BTB, CONTINUITY_TESTS
-C, 0.1A, <2R, 0.01s
-X-j1
-CV-j2
-CV-j3
-C-j4
-ETB, CONTINUITY_TESTS
