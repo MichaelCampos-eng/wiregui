@@ -87,7 +87,8 @@ class MainWindow(QMainWindow):
             """
 
             with zipfile.ZipFile(file_path, "w") as zf:
-                pass
+                self.right_panel_widget.view_model.save_as(zf)
+                self.left_panel_widget.view_model.save_as(zf)
 
         except ValueError as e:
             QMessageBox.critical(self, "Error", str(e))

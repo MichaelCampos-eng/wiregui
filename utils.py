@@ -13,3 +13,15 @@ def open_config(file_path):
             return cfg
     except ValueError as e:
         raise e
+
+def fetch_wire_list_cfg(file_path=None):
+    return open_config(file_path if file_path else "config.yaml")
+    
+
+def fetch_unused_list_cfg(file_path=None):
+    return open_config(file_path if file_path else "config.yaml")
+
+def fetch_grd_list_cfg(file_path=None):
+    cfg: Config  = open_config(file_path if file_path else "config.yaml")
+    cfg.continuity_cfg.update_block_name("GROUND_CONTINUITY_TESTS")
+    return cfg

@@ -7,14 +7,15 @@ from utils import *
 class ListViewModel:
 
     def __init__(self):
+        self.__cfg__: Config
         self.__table__: DitmcoList
-        self.__test__: DitmcoRo
+        self.__ro__: DitmcoRo
+
+    def get_test(self):
+        return self.__ro__.get_test()
              
     def get_df(self):
         return self.__table__.get_df()
-    
-    def append(self, arg):
-        self.__table__.step(arg)
     
     def get_name(self):
         return self.__table__.get_list_name()
@@ -22,9 +23,12 @@ class ListViewModel:
     def get_placeholder(self):
         return self.__table__.fetch_hint_txt()
 
-    def export_test(self, file_path):
+    def append(self, arg):
+        self.__table__.step(arg)
+    
+    def export_ro_file(self, file_path):
         try:
-            self.__test__.export_test(file_path)
+            self.__ro__.export(file_path)
         except ValueError as e:
             raise e
 
@@ -43,24 +47,32 @@ class ListViewModel:
             raise e
 
 class WireListViewModel(ListViewModel):
-    def __init__(self, cfg: Config):
+    def __init__(self):
         super().__init__()
+        cfg = fetch_wire_list_cfg()
         table = WireList()
+
+        self.__cfg__ = cfg
         self.__table__ = table
-        self.__test__ = WireListRo(cfg, table.get_df())
+        self.__ro__ = WireListRo(cfg, table.get_df())
 
 class UnusedListViewModel(ListViewModel):
-    def __init__(self, cfg: Config):
+    def __init__(self):
         super().__init__()
+        cfg = fetch_unused_list_cfg()
         table = IsolatedList()
+
+        self.__cfg__ = cfg
         self.__table__ = table
-        self.__test__ = UnusedListRo(cfg, table.get_df())
+        self.__ro__ = UnusedListRo(cfg, table.get_df())
     
 
 class GroundListViewModel(ListViewModel):
-    def __init__(self, cfg: Config):
+    def __init__(self):
         super().__init__()
+        cfg = fetch_grd_list_cfg()
         table = GroundList()
+
+        self.__cfg__ = cfg
         self.__table__ = table
-        self.__cfg__.continuity_cfg.update_block_name("GROUND_CONTINUITY_TESTS")
-        self.__test__ = GroundListRo(self.__cfg__, table.get_df())
+        self.__ro__ = GroundListRo(cfg, table.get_df())

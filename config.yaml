@@ -1,5 +1,3 @@
-results_path: ./
-
 continuity_cfg:
   execute: True
   block_name: CONTINUITY_TESTS

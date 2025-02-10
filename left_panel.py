@@ -7,11 +7,14 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtGui import QAction, QIcon
 from schematic_views import *
+from panel_view_model import LeftPanelViewModel
 
 class LeftPanelView(QWidget):
 
     def __init__(self, parent):
         super().__init__()
+        self.view_model = LeftPanelViewModel()
+
         left_panel_layout = QVBoxLayout()
         self.schematic = SchematicView()
         self.open = self.schematic.show_check_box.clicked

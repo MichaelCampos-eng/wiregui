@@ -1,31 +1,55 @@
-from omegaconf import OmegaConf
 from list_view_model import *
+import pandas as pd
+import io
+import zipfile
+
+
+class LeftPanelViewModel:
+    def __init__(self):
+        pass
+
+    def save_as(self, zf: zipfile.ZipFile):
+        pass
 
 class RightPanelViewModel:
     def __init__(self):
-        self.__wire_model__: WireListViewModel
-        self.__isolated_model__: UnusedListViewModel
-        self.__grd_model__: GroundListViewModel
-        self.__cfg__: Config
         self.error_str = "Empty tables"
         self.__name__ = "Tables"
-        self.__set_config_default__()
-        self.__set_submodels__()
+        wire_model = WireListViewModel()
+        isolated_model = UnusedListViewModel()
+        grd_model = GroundListViewModel()
 
-    def __set_config_default__(self):
-        try:
-            self.__cfg__ = open_config("config.yaml")
-        except ValueError as e:
-            raise e
-    
-    def __set_submodels__(self):
-        self.__wire_model__ = WireListViewModel(self)
-        self.__isolated_model__ = UnusedListViewModel()
-        self.__grd_model__ = GroundListViewModel()
-
+        self.__ro__: AggregateRo = AggregateRo(wire_model.get_test(),
+                                               isolated_model.get_test(),
+                                               grd_model.get_test())
+        self.__wire_model__: WireListViewModel = wire_model
+        self.__isolated_model__: UnusedListViewModel = isolated_model
+        self.__grd_model__: GroundListViewModel = grd_model
+        
+        
     def get_name(self):
         return self.__name__
     
+
+    def save_as(self, zf: zipfile.ZipFile):
+        try:
+            wire_buff = io.BytesIO()
+            wire_list: pd.DataFrame = self.__wire_model__.get_df()
+            wire_list.to_parquet(wire_buff, engine="pyarrow")
+            zf.writestr(self.__wire_model__.get_name(), wire_buff.getvalue())
+
+            iso_buff = io.BytesIO()
+            iso_list: pd.DataFrame = self.__isolated_model__.get_df()
+            iso_list.to_parquet(iso_buff, engine="pyarrow")
+            zf.writestr(self.__isolated_model__.get_name(), iso_buff.getvalue())
+
+            grd_buff = io.BytesIO()
+            grd_list: pd.DataFrame = self.__grd_model__.get_df()
+            grd_list.to_parquet(grd_buff, engine="pyarrow")
+            zf.writestr(self.__grd_model__.get_name(), grd_buff.getvalue())
+        except ValueError as e:
+            raise e
+
     def export_spreadsheets(self, folder_path: str):
         try:
             if not self.__wire_model__.get_df().empty:
@@ -36,15 +60,10 @@ class RightPanelViewModel:
                 self.__grd_model__.export_spreadsheet(folder_path + f"/{self.__grd_model__.get_name()}.csv")
         except ValueError as e:
             raise e
-
-    # TODO: figure out what to do with config
-    def export_tests(self, file_path: str):
+        
+    def export_ro_file(self, file_path: str):
         try:
-            cfg = self.__wire_model__.set_file_path(file_path)
-            AggregateRo(self.__cfg__,
-                        self.__wire_model__.get_df(),
-                        self.__isolated_model__.get_df(),
-                        self.__grd_model__.get_df()).export_test()
+            self.__ro__.export(file_path)
         except ValueError as e:
             raise e
     
@@ -56,3 +75,4 @@ class RightPanelViewModel:
     
     def get_grd_model(self):
         return self.__grd_model__
+    
