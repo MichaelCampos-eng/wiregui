@@ -16,10 +16,9 @@ from list_view_model import *
 
 class ListView(QWidget):
     
-    def __init__(self, parent):
+    def __init__(self, parent, model: ListViewModel):
         super().__init__()
-        self.list_model: ListViewModel
-        self.__setup_list_model__()
+        self.list_model = model
 
         main_layout = QVBoxLayout()
 
@@ -96,8 +95,7 @@ class ListView(QWidget):
                                               "CSV Files (*.csv)")
         if file_path:
             try:
-                self.list_model.set_file_path(file_path)
-                self.list_model.import_spreadsheet()
+                self.list_model.import_spreadsheet(file_path)
                 self.model = PandasModel(self.list_model.get_df())
                 self.table_view.setModel(self.model)
             except ValueError as e:
@@ -111,8 +109,7 @@ class ListView(QWidget):
                                               "csv Files (*.csv))")
         if file_path:
             try:
-                self.list_model.set_file_path(file_path)
-                self.list_model.export_spreadsheet()
+                self.list_model.export_spreadsheet(file_path)
             except ValueError as e:
                 QMessageBox.critical(self, "Error", str(e))
 
@@ -131,25 +128,16 @@ class ListView(QWidget):
         
 
 class WireListView(ListView):
-    def __init__(self, parent):
-        super().__init__(parent)
-        
-    def __setup_list_model__(self):
-        self.list_model = WireListViewModel()
+    def __init__(self, parent, model: WireListViewModel):
+        super().__init__(parent, model)
         
 class UnusedListView(ListView):
-    def __init__(self, parent):
-        super().__init__(parent)
-    
-    def __setup_list_model__(self):
-        self.list_model = UnusedListViewModel()
+    def __init__(self, parent, model: UnusedListViewModel):
+        super().__init__(parent, model)
     
     def __input_placeholder__(self):
         self.user_input_box.setPlaceholderText(self.list_model.get_placeholder())
 
 class GroundListView(ListView):
-    def __init__(self, parent):
-        super().__init__(parent)
-
-    def __setup_list_model__(self):
-        self.list_model = GroundListViewModel()
+    def __init__(self, parent, model: GroundListViewModel):
+        super().__init__(parent, model)
