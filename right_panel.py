@@ -1,12 +1,10 @@
 from PyQt6.QtWidgets import ( 
     QWidget,
     QVBoxLayout,
-    QHBoxLayout,
 )
 from PyQt6.QtGui import QAction, QIcon
 from wrman.converter.ditmco_test import *
 from wrman.conn_management.list_manager import *
-from wrman.config_classes.config import Config
 from table_views import *
 from list_view_model import AggregateModel
 
