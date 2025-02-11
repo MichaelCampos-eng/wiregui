@@ -8,7 +8,7 @@ class LeftPanelViewModel:
     def __init__(self):
         pass
 
-    def save_as(self, zf: zipfile.ZipFile):
+    def save(self, zf: zipfile.ZipFile):
         pass
 
 class RightPanelViewModel:
@@ -31,7 +31,7 @@ class RightPanelViewModel:
         return self.__name__
     
 
-    def save_as(self, zf: zipfile.ZipFile):
+    def save(self, zf: zipfile.ZipFile):
         try:
             wire_buff = io.BytesIO()
             wire_list: pd.DataFrame = self.__wire_model__.get_df()

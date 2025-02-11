@@ -6,23 +6,32 @@ from PyQt6.QtWidgets import (
     QLabel,
     QScrollArea,
     QCheckBox,
+    QFileDialog,
+    QMessageBox
 )
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap, QPalette, QWheelEvent, QKeySequence, QKeyEvent
-from typing import List
-from pdf2image import convert_from_path
-from PIL import ImageQt, Image
-import os
+from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QAction, QPalette, QKeyEvent, QIcon
+from schematic_view_model import SchematicViewModel
+import qtawesome as qta
 
 class SchematicView(QWidget):
+    view_changed = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, grandparent):
         super().__init__()
-        self.index = 0
-        self.pil_imgs: List[Image.Image] = None
-        self.scale_factor = 1.0
+        self.view_model = SchematicViewModel()
 
         layout = QVBoxLayout()
+
+        open_pdf_action = QAction(QIcon("open.png"), "&Document", self)
+        open_pdf_action.setStatusTip(f"Open schematic")
+        open_pdf_action.triggered.connect(self.__open_pdf_dialog__)
+        grandparent.open_menu.addAction(open_pdf_action)
+
+        open_img_action = QAction(QIcon("open.png"), "&Image", self)
+        open_img_action.setStatusTip(f"Open schematic")
+        open_img_action.triggered.connect(self.__open_img_dialog__)
+        grandparent.open_menu.addAction(open_img_action)
 
         display_layout = QHBoxLayout()
         project_name = QLabel("Schematic")
@@ -40,19 +49,35 @@ class SchematicView(QWidget):
 
         btns_layout = QHBoxLayout()
         self.btns_widget = QWidget()
+
         left_arrow = QPushButton()
-        left_arrow.setIcon(self.style().standardIcon(self.style().StandardPixmap.SP_ArrowLeft))
+        left_arrow.setIcon(qta.icon("fa.arrow-circle-left"))
         left_arrow.setToolTip("Previous page")
         left_arrow.clicked.connect(self.__traverse_left__)
         right_arrow = QPushButton()
-        right_arrow.setIcon(self.style().standardIcon(self.style().StandardPixmap.SP_ArrowRight))
+        right_arrow.setIcon(qta.icon("fa.arrow-circle-right"))
         right_arrow.setToolTip("Next page")
         right_arrow.clicked.connect(self.__traverse_right__)
-        self.page_num = QLabel("Page " + str(self.index))
+        self.page_num = QLabel(f"Page {self.view_model.get_page_num()}")
+
         btns_layout.addWidget(left_arrow)
         btns_layout.addWidget(self.page_num)
         btns_layout.addWidget(right_arrow)
+
         btns_layout.addStretch()
+
+        mag_min = QPushButton()
+        mag_min.setIcon(qta.icon("fa.minus-circle"))
+        mag_min.setToolTip("Zoom out")
+        mag_min.clicked.connect(self.__zoom_out__)
+        mag_plus = QPushButton()
+        mag_plus.setIcon(qta.icon("fa.plus-circle"))
+        mag_plus.setToolTip("Zoom in")
+        mag_plus.clicked.connect(self.__zoom_in__)
+
+        btns_layout.addWidget(mag_min)
+        btns_layout.addWidget(mag_plus)
+
         self.btns_widget.setLayout(btns_layout)
 
         layout.addLayout(display_layout)
@@ -60,12 +85,10 @@ class SchematicView(QWidget):
         layout.addWidget(self.btns_widget)
         self.setLayout(layout)
 
-    def import_schematic(self, file_path: str):
-        # name = os.path.splitext(file_path.split("/")[-1])[0]
-        self.pil_imgs = convert_from_path(file_path)
-        self.index = 0
-        self.scale_factor = 1.0
+    def __import_schematic__(self, path: str):
+        self.view_model.import_as_img(pdf_file_path=path)
         self.__set_tool_bar__()
+        self.view_changed.emit()
     
     def __toggle_img__(self):
         self.__show_image__() if self.show_check_box.isChecked() else self.__hide_image__()
@@ -77,62 +100,43 @@ class SchematicView(QWidget):
         self.scroll_area.show(), self.btns_widget.show()
 
     def __traverse_left__(self):
-        if self.pil_imgs:
-            self.index = max(0, self.index - 1)
-            self.__set_tool_bar__()
+        self.view_model.decrease_index()
+        self.__set_tool_bar__()
 
     def __traverse_right__(self):
-        if self.pil_imgs:
-            self.index = min(len(self.pil_imgs) - 1, self.index + 1)
-            self.__set_tool_bar__()
+        self.view_model.increase_index()
+        self.__set_tool_bar__()
 
     def __set_tool_bar__(self):
-        self.scale_factor = 1.0
-        img_label = self.__get_image__()
+        img_label = self.view_model.get_image()
         self.scroll_area.setWidget(img_label)
-        self.page_num.setText("Page " + str(self.index))
-
-    def __get_image__(self) -> QLabel:
-        pil_img = self.pil_imgs[self.index].convert("RGBA")
-        q_image = ImageQt.ImageQt(pil_img)
-        img_label = QLabel()
-        img_label.setPixmap(QPixmap.fromImage(q_image))
-        img_label.setScaledContents(True)
-        return img_label
-    
-    def wheelEvent(self, event: QWheelEvent):
-        """Handle zooming with the mouse wheel."""
-        if event.angleDelta().y() > 0:  # Scroll up to zoom in
-            self.scale_factor *= 1.1
-        elif event.angleDelta().y() < 0:  # Scroll down to zoom out
-            self.scale_factor /= 1.1
-
-        # Limit zoom levels to reasonable bounds
-        self.scale_factor = max(0.1, min(self.scale_factor, 10.0))
-
-        # Resize the QLabel based on the scale factor
-        
-    
-    def new_image_show(self):
-        img = self.__get_image__()
-        new_width = int(img.width() * self.scale_factor)
-        new_height = int(img.height() * self.scale_factor)
-
-        img.resize(new_width, new_height)
-        self.scroll_area.setWidget(img)
+        self.page_num.setText(f"Page {self.view_model.get_page_num()}")
     
     def keyPressEvent(self, event: QKeyEvent):
-        """Handle zooming with Ctrl + and Ctrl -."""
         if event.modifiers() == Qt.KeyboardModifier.ControlModifier:
-            if event.key() in [Qt.Key.Key_Plus, Qt.Key.Key_Equal]:  # Ctrl +
-                self.zoom_in()
-            elif event.key() == Qt.Key.Key_Minus:  # Ctrl -
-                self.zoom_out()
+            if event.key() in [Qt.Key.Key_Plus, Qt.Key.Key_Equal]:
+                self.__zoom_in__()
+            elif event.key() == Qt.Key.Key_Minus:
+                self.__zoom_out__()
     
-    def zoom_in(self):
-        self.scale_factor = min(10.0, self.scale_factor * 1.1)
-        self.new_image_show()
+    def __zoom_in__(self):
+        self.view_model.scale_up()
+        self.scroll_area.setWidget(self.view_model.get_image())
     
-    def zoom_out(self):
-        self.scale_factor = max(0.9, self.scale_factor/1.1)
-        self.new_image_show()
+    def __zoom_out__(self):
+        self.view_model.scale_down()
+        self.scroll_area.setWidget(self.view_model.get_image())
+
+    def __open_img_dialog__(self):
+        pass
+
+    def __open_pdf_dialog__(self):
+        dialog = QFileDialog(self)
+        file_path, _ = dialog.getOpenFileName(self,
+                                              "Open schematic",
+                                              "",
+                                              "PDF Files (*.pdf)")
+        try:
+            self.__import_schematic__(path=file_path)
+        except ValueError as e:
+            QMessageBox.critical(self, "Error", str(e))

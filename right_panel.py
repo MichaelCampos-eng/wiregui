@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
 )
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QAction, QIcon
 from wrman.converter.ditmco_test import *
 from wrman.conn_management.list_manager import *
@@ -9,6 +10,7 @@ from table_views import *
 from panel_view_model import RightPanelViewModel
 
 class RightPanelView(QWidget):
+    view_changed = pyqtSignal()
 
     def __init__(self, parent):
         super().__init__()
@@ -36,12 +38,19 @@ class RightPanelView(QWidget):
         self.unused_list_view = UnusedListView(self, self.view_model.get_isolated_model())
         self.ground_list_view = GroundListView(self, self.view_model.get_grd_model())
 
+        self.wire_list_view.view_changed.connect(self.__view_changed__)
+        self.wire_list_view.view_changed.connect(self.__view_changed__)
+        self.wire_list_view.view_changed.connect(self.__view_changed__)
+
         right_panel_layout.addWidget(self.wire_list_view)
         right_panel_layout.addWidget(self.unused_list_view)
         right_panel_layout.addWidget(self.ground_list_view)
         right_panel_layout.addStretch()
 
         self.setLayout(right_panel_layout)
+
+    def __view_changed__(self):
+        self.view_changed.emit()
 
     def __export_csvs_dialog__(self):
         dialog = QFileDialog(self)
@@ -57,7 +66,8 @@ class RightPanelView(QWidget):
                                               "Save File",
                                               f"{self.view_model.get_name()}.ro",
                                               "RO Files (*.ro)")
-        try:
-            self.view_model.export_ro_file(file_path)
-        except ValueError as e:
-            QMessageBox.critical(self, "Error", str(e))
+        if file_path:
+            try:
+                self.view_model.export_ro_file(file_path)
+            except ValueError as e:
+                QMessageBox.critical(self, "Error", str(e))

@@ -17,14 +17,14 @@ from left_panel import LeftPanelView
 
 import zipfile
 
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.file_path = ""
+        self.project_name = "New Project"
 
         central_widget = QWidget()
-        self.setWindowTitle("New Project")
+        self.setWindowTitle(self.project_name)
         self.resize(1000, 600)
         self.__set_menu_bar__()
     
@@ -33,7 +33,9 @@ class MainWindow(QMainWindow):
         self.right_panel_widget = RightPanelView(self)
         self.left_panel_widget = LeftPanelView(self)
         self.left_panel_widget.open.connect(self.rearrange)
-        
+        self.left_panel_widget.view_changed.connect(self.__toggle_menu__)
+        self.right_panel_widget.view_changed.connect(self.__toggle_menu__)
+
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
         self.splitter.addWidget(self.left_panel_widget)
         self.splitter.addWidget(self.right_panel_widget)
@@ -44,7 +46,6 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.splitter)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
-
         
     def __set_menu_bar__(self):
         menu = self.menuBar()
@@ -59,6 +60,7 @@ class MainWindow(QMainWindow):
         save_action = QAction(QIcon("open.png"), "&Save", self)
         save_action.setStatusTip("Save")
         save_action.triggered.connect(self.__save__)
+        save_action.setEnabled(False)
 
         save_as_action = QAction(QIcon("open.png"), "&Save As", self)
         save_as_action.setStatusTip("Save As")
@@ -70,6 +72,9 @@ class MainWindow(QMainWindow):
         self.import_menu = menu.addMenu("&Import")
         self.export_menu = menu.addMenu("&Export")
 
+    def __toggle_menu__(self):
+        self.setWindowTitle(f"{self.project_name} *")
+
     def __open_project__(self):
         pass
 
@@ -79,22 +84,23 @@ class MainWindow(QMainWindow):
                                               "Save File",
                                               "new_project.tb",
                                               "TB Files (*.tb)")
-        try:
-            """
-            1) Save the tables
-            2) Image
-            3) Meta
-            """
-
-            with zipfile.ZipFile(file_path, "w") as zf:
-                self.right_panel_widget.view_model.save_as(zf)
-                self.left_panel_widget.view_model.save_as(zf)
-
-        except ValueError as e:
-            QMessageBox.critical(self, "Error", str(e))
+        if file_path:
+            if self.file_path == "":
+                self.file_path = file_path
+                self.__save__()
+            else:
+                root = self.file_path
+                self.file_path = file_path
+                self.__save__()
+                self.file_path = root
 
     def __save__(self):
-        pass
+        try:
+            with zipfile.ZipFile(self.file_path, "w") as zf:
+                self.right_panel_widget.view_model.save(zf)
+                self.left_panel_widget.view_model.save(zf)
+        except ValueError as e:
+            QMessageBox.critical(self, "Error", str(e))
 
     def rearrange(self):
         if self.left_panel_widget.isChecked():
