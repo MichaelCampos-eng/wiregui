@@ -75,8 +75,33 @@ class MainWindow(QMainWindow):
     def __toggle_menu__(self):
         self.setWindowTitle(f"{self.project_name} *")
 
+    # TODO: finish implementing open project
     def __open_project__(self):
-        pass
+        dialog = QFileDialog(self)
+        file_path, _ = dialog.getOpenFileName(self, 
+                                              "Open Project",
+                                              ".",
+                                              "Project Files (*.tb)")
+        if file_path:
+            try:
+                with zipfile.ZipFile(self.file_path, "r") as zf:
+                    images = []
+                    data_frames = []
+                    json = []
+                    for file_name in zf.namelist():
+                        with zf.open(file_name) as file:
+                            if file_name.endswith(".png"):
+                                images.append(file)
+                            elif file_name.endswith(".parquet"):
+
+                                data_frames.append(file)
+                            elif file_name.endswith(".json"):
+                                pass
+
+
+            except ValueError as e:
+                QMessageBox.critical(self, "Error", str(e)) 
+            
 
     def __save_as__(self):
         dialog = QFileDialog(self)

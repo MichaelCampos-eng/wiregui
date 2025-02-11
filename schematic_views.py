@@ -17,9 +17,9 @@ import qtawesome as qta
 class SchematicView(QWidget):
     view_changed = pyqtSignal()
 
-    def __init__(self, grandparent):
+    def __init__(self, grandparent, view_model: SchematicViewModel):
         super().__init__()
-        self.view_model = SchematicViewModel()
+        self.view_model: SchematicViewModel = view_model
 
         layout = QVBoxLayout()
 

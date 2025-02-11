@@ -1,11 +1,8 @@
 from PyQt6.QtWidgets import ( 
     QWidget,
-    QVBoxLayout,
-    QFileDialog,
-    QMessageBox
+    QVBoxLayout
 )
 
-from PyQt6.QtGui import QAction, QIcon
 from schematic_views import *
 from panel_view_model import LeftPanelViewModel
 
@@ -17,7 +14,7 @@ class LeftPanelView(QWidget):
         self.view_model = LeftPanelViewModel()
 
         left_panel_layout = QVBoxLayout()
-        self.schematic = SchematicView(parent)
+        self.schematic = SchematicView(parent, self.view_model.get_sch_model())
         self.schematic.view_changed.connect(self.__view_changed__)
         self.open = self.schematic.show_check_box.clicked
         left_panel_layout.addWidget(self.schematic)

@@ -1,4 +1,5 @@
 from list_view_model import *
+from schematic_view_model import SchematicViewModel
 import pandas as pd
 import io
 import zipfile
@@ -6,10 +7,16 @@ import zipfile
 
 class LeftPanelViewModel:
     def __init__(self):
-        pass
+        self.sch_model = SchematicViewModel
 
     def save(self, zf: zipfile.ZipFile):
+        self.sch_model.save(zf)
+
+    def open(self, zf: zipfile.ZipFile):
         pass
+
+    def get_sch_model(self):
+        return self.sch_model
 
 class RightPanelViewModel:
     def __init__(self):
@@ -25,12 +32,10 @@ class RightPanelViewModel:
         self.__wire_model__: WireListViewModel = wire_model
         self.__isolated_model__: UnusedListViewModel = isolated_model
         self.__grd_model__: GroundListViewModel = grd_model
-        
-        
+            
     def get_name(self):
         return self.__name__
     
-
     def save(self, zf: zipfile.ZipFile):
         try:
             wire_buff = io.BytesIO()
