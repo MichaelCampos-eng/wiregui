@@ -1,11 +1,19 @@
+from PyQt6.QtCore import pyqtSignal, QObject
 from list_view_model import *
 from schematic_view_model import SchematicViewModel
 import zipfile
 from PIL import Image
 
-class LeftPanelViewModel:
+class LeftPanelViewModel(QObject):
+    data_changed = pyqtSignal()
+
     def __init__(self):
+        super().__init__()
         self.sch_model = SchematicViewModel()
+        self.sch_model.data_changed.connect(self.__data_change__)
+
+    def __data_change__(self):
+        self.data_changed.emit()
 
     def save(self, zf: zipfile.ZipFile):
         self.sch_model.save(zf)
@@ -19,8 +27,11 @@ class LeftPanelViewModel:
     def clear(self):
         self.sch_model.clear()
 
-class RightPanelViewModel:
+class RightPanelViewModel(QObject):
+    data_changed = pyqtSignal()
+
     def __init__(self):
+        super().__init__()
         self.error_str = "Empty tables"
         self.__name__ = "Tables"
         wire_model = WireListViewModel()
@@ -33,6 +44,13 @@ class RightPanelViewModel:
         self.__wire_model__: WireListViewModel = wire_model
         self.__isolated_model__: UnusedListViewModel = isolated_model
         self.__grd_model__: GroundListViewModel = grd_model
+
+        self.__wire_model__.data_changed.connect(self.__data_change__)
+        self.__isolated_model__.data_changed.connect(self.__data_change__)
+        self.__grd_model__.data_changed.connect(self.__data_change__)
+
+    def __data_change__(self):
+        self.data_changed.emit()
 
     def clear(self):
         self.__wire_model__.clear()

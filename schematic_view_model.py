@@ -41,6 +41,7 @@ class SchematicViewModel(QObject):
         self.__pil_imgs__ = convert_from_path(pdf_file_path)
         self.__index__ = 0
         self.__scale_factor__ = 1.0
+        self.data_changed.emit()
 
     def increase_index(self):
         if self.__pil_imgs__:

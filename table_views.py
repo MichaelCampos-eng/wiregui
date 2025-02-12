@@ -16,7 +16,6 @@ from pandas_model import *
 from list_view_model import *
 
 class ListView(QWidget):
-    view_changed = pyqtSignal()
     
     def __init__(self, parent, model: ListViewModel):
         super().__init__()
@@ -74,7 +73,7 @@ class ListView(QWidget):
         try:
             self.view_model.append(self.user_input_box.text())
             self.__new_table_view__()
-            self.view_changed.emit()
+            
         except ValueError as e:
             QMessageBox.critical(self, "Input List Error", str(e))
 
@@ -105,7 +104,6 @@ class ListView(QWidget):
                 self.view_model.import_spreadsheet(file_path)
                 self.model = PandasModel(self.view_model.get_df())
                 self.table_view.setModel(self.model)
-                self.view_changed.emit()
             except ValueError as e:
                 QMessageBox.critical(self, "Error", str(e))
 

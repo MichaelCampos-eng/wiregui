@@ -29,6 +29,7 @@ class ListViewModel(QObject):
 
     def append(self, arg):
         self.__table__.step(arg)
+        self.data_changed.emit()
     
     def export_ro_file(self, file_path):
         try:
@@ -47,6 +48,7 @@ class ListViewModel(QObject):
     def import_spreadsheet(self, file_path):
         try:
             self.__table__.load_list(file_path)
+            self.data_changed.emit()
         except ValueError as e:
             raise e
         

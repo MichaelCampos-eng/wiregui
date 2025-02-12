@@ -12,10 +12,10 @@ from panel_view_model import RightPanelViewModel
 class RightPanelView(QWidget):
     view_changed = pyqtSignal()
 
-    def __init__(self, parent):
+    def __init__(self, parent, view_model: RightPanelViewModel):
         super().__init__()
 
-        self.view_model = RightPanelViewModel()
+        self.view_model = view_model
 
         self.csv_import_menu = parent.import_menu.addMenu("&Spreadsheet (.csv)")
         self.csv_export_menu = parent.export_menu.addMenu("&Spreadsheet (.csv)")

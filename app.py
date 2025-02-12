@@ -7,38 +7,33 @@ from PyQt6.QtWidgets import (
     QFileDialog,
     QMessageBox
 )
-from PyQt6.QtGui import QAction, QIcon
+from main_view_model import MainViewModel
+from PyQt6.QtGui import QAction, QIcon, QKeySequence
 from PyQt6.QtCore import Qt
-from PIL import Image
-
 
 from right_panel import RightPanelView
 from left_panel import LeftPanelView
 
-import zipfile
-import json
-import io
 import sys
 import os
 
 class MainWindow(QMainWindow):
+
     def __init__(self):
         super().__init__()
-        self.file_path = ""
-        self.project_name = "New Project"
+        self.view_model = MainViewModel()
+        self.view_model.data_changed.connect(self.__toggle_save__)
 
         central_widget = QWidget()
-        self.setWindowTitle(self.project_name)
+        self.setWindowTitle(self.view_model.get_name())
         self.resize(1000, 600)
         self.__set_menu_bar__()
     
         main_layout = QHBoxLayout()
 
-        self.right_panel_widget = RightPanelView(self)
-        self.left_panel_widget = LeftPanelView(self)
-        self.left_panel_widget.open.connect(self.rearrange)
-        self.left_panel_widget.view_changed.connect(self.__toggle_menu__)
-        self.right_panel_widget.view_changed.connect(self.__toggle_menu__)
+        self.right_panel_widget = RightPanelView(self, self.view_model.get_right_panel_model())
+        self.left_panel_widget = LeftPanelView(self, self.view_model.get_left_panel_model())
+        self.left_panel_widget.open.connect(self.__rearrange__)
 
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
         self.splitter.addWidget(self.left_panel_widget)
@@ -65,11 +60,13 @@ class MainWindow(QMainWindow):
 
         self.new_proj_action = QAction(QIcon("open.png"), "&New Project", self)
         self.new_proj_action.setStatusTip("Create a new project")
+        self.new_proj_action.setShortcut(QKeySequence("Ctrl+N"))
         self.new_proj_action.triggered.connect(self.__create_new__)
         self.new_proj_action.setEnabled(False)
 
         self.save_action = QAction(QIcon("open.png"), "&Save", self)
         self.save_action.setStatusTip("Save")
+        self.save_action.setShortcut(QKeySequence("Ctrl+S"))
         self.save_action.triggered.connect(self.__save__)
         self.save_action.setEnabled(False)
 
@@ -80,14 +77,14 @@ class MainWindow(QMainWindow):
         file_menu.addAction(self.new_proj_action)
         file_menu.addAction(self.save_action)
         file_menu.addAction(save_as_action)
-        
 
         self.import_menu = menu.addMenu("&Import")
         self.export_menu = menu.addMenu("&Export")
 
-    def __toggle_menu__(self):
-        self.setWindowTitle(f"{self.project_name} *")
+    def __toggle_save__(self):
         self.save_action.setEnabled(True)
+        self.new_proj_action.setEnabled(True)
+        self.setWindowTitle(f"{self.view_model.get_name()} *")
 
     def __open_project__(self):
         dialog = QFileDialog(self)
@@ -97,18 +94,10 @@ class MainWindow(QMainWindow):
                                               "Project Files (*.tb)")
         if file_path:
             try:
-                with zipfile.ZipFile(file_path, "r") as zf:
-                    imgs = []
-                    for file_name in zf.namelist():
-                        with zf.open(file_name) as file:
-                            if file_name.endswith(".png"):
-                                imgs.append(Image.open(io.BytesIO(file.read())))
-                            elif file_name.endswith(".parquet"):
-                                self.right_panel_widget.view_model.open_parquet(file_name, file)
-                            elif file_name.endswith(".json"):
-                                self.__load_meta_data__(file)
-                    self.left_panel_widget.view_model.open_images(imgs)
-                    self.new_proj_action.setEnabled(True)
+                self.view_model.open_project(file_path)
+                self.save_action.setEnabled(False)
+                self.new_proj_action.setEnabled(True)
+                self.setWindowTitle(self.view_model.get_name())
             except ValueError as e:
                 QMessageBox.critical(self, "Error", str(e))
             
@@ -119,48 +108,17 @@ class MainWindow(QMainWindow):
                                               "new_project.tb",
                                               "TB Files (*.tb)")
         if file_path:
-            if self.file_path == "":
-                self.file_path = file_path
-                self.project_name = os.path.basename(file_path).split(".")[0]
-                self.setWindowTitle(self.project_name)
-                self.__save__()
-            else:
-                root = self.file_path
-                self.file_path = file_path
-                self.__save__()
-                self.file_path = root
+            self.view_model.save_as(file_path)
+            self.setWindowTitle(self.view_model.get_name())
 
     def __save__(self):
         try:
-            with zipfile.ZipFile(self.file_path, "w") as zf:
-                self.__save_meta_data__(zf)
-                self.right_panel_widget.view_model.save(zf)
-                self.left_panel_widget.view_model.save(zf)
-                self.save_action.setEnabled(False)
-                self.new_proj_action.setEnabled(True)
-                self.setWindowTitle(self.project_name)
+            self.view_model.save()
+            self.save_action.setEnabled(False)
+            self.new_proj_action.setEnabled(True)
+            self.setWindowTitle(self.view_model.get_name())
         except ValueError as e:
             QMessageBox.critical(self, "Error", str(e))
-
-    def __save_meta_data__(self, zf: zipfile.ZipFile):
-        meta_data = {
-            "project_name": self.project_name,
-            "file_path": self.file_path
-        }
-        json_str = json.dumps(meta_data, indent=4)
-        buffer = io.BytesIO()
-        buffer.write(json_str.encode("utf-8"))
-        buffer.seek(0)
-        zf.writestr("metadata.json", buffer.getvalue())
-
-    def __load_meta_data__(self, file: zipfile.ZipExtFile):
-        meta_data = json.load(file)
-        self.project_name = meta_data["project_name"]
-        self.file_path = meta_data["file_path"]
-        self.setWindowTitle(self.project_name)
-
-    def __is_new_file__(self):
-        return not self.file_path
 
     def __create_new__(self):
         if self.save_action.isEnabled():
@@ -173,17 +131,16 @@ class MainWindow(QMainWindow):
             if reply == QMessageBox.StandardButton.Cancel:
                 return
             if reply == QMessageBox.StandardButton.Yes:
-                if self.__is_new_file__():
+                if self.view_model.is_new_file():
                     self.__save_as__()
                 else:
                     self.__save__()
-        self.project_name = "New Project"
-        self.file_path = ""
-        self.left_panel_widget.view_model.clear()
-        self.right_panel_widget.view_model.clear()
-                    
+        self.view_model.reset()
+        self.setWindowTitle(self.view_model.get_name())
+        self.new_proj_action.setEnabled(False)
+        self.save_action.setEnabled(False)
 
-    def rearrange(self):
+    def __rearrange__(self):
         if self.left_panel_widget.isChecked():
             self.splitter.setOrientation(Qt.Orientation.Horizontal)
             self.splitter.setSizes([400, 100])

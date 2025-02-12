@@ -15,7 +15,6 @@ from schematic_view_model import SchematicViewModel
 import qtawesome as qta
 
 class SchematicView(QWidget):
-    view_changed = pyqtSignal()
 
     def __init__(self, grandparent, view_model: SchematicViewModel):
         super().__init__()
@@ -89,7 +88,6 @@ class SchematicView(QWidget):
     def __import_schematic__(self, path: str):
         self.view_model.import_as_img(pdf_file_path=path)
         self.__set_tool_bar__()
-        self.view_changed.emit()
     
     def __toggle_img__(self):
         self.__show_image__() if self.show_check_box.isChecked() else self.__hide_image__()
