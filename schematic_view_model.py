@@ -27,7 +27,10 @@ class SchematicViewModel(QObject):
                 zf.writestr(f"{index}.png", img_buffer.getvalue())
         except ValueError as e:
             raise e
-        
+    
+    def clear(self):
+        self.update_imgs(imgs=[])
+
     def update_imgs(self, imgs: List[Image.Image]):
         self.__pil_imgs__ = imgs
         self.__index__ = 0

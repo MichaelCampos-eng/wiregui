@@ -61,6 +61,10 @@ class ListViewModel(QObject):
         buffer.seek(0)
         zf.writestr(f"{self.get_name()}.parquet", buffer.getvalue())
 
+    def clear(self):
+        self.__table__.clear()
+        self.data_changed.emit()
+
 class WireListViewModel(ListViewModel):
     def __init__(self):
         super().__init__()

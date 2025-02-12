@@ -63,6 +63,11 @@ class MainWindow(QMainWindow):
 
         self.open_menu.addAction(open_project_action)
 
+        self.new_proj_action = QAction(QIcon("open.png"), "&New Project", self)
+        self.new_proj_action.setStatusTip("Create a new project")
+        self.new_proj_action.triggered.connect(self.__create_new__)
+        self.new_proj_action.setEnabled(False)
+
         self.save_action = QAction(QIcon("open.png"), "&Save", self)
         self.save_action.setStatusTip("Save")
         self.save_action.triggered.connect(self.__save__)
@@ -72,6 +77,7 @@ class MainWindow(QMainWindow):
         save_as_action.setStatusTip("Save As")
         save_as_action.triggered.connect(self.__save_as__)
 
+        file_menu.addAction(self.new_proj_action)
         file_menu.addAction(self.save_action)
         file_menu.addAction(save_as_action)
         
@@ -102,6 +108,7 @@ class MainWindow(QMainWindow):
                             elif file_name.endswith(".json"):
                                 self.__load_meta_data__(file)
                     self.left_panel_widget.view_model.open_images(imgs)
+                    self.new_proj_action.setEnabled(True)
             except ValueError as e:
                 QMessageBox.critical(self, "Error", str(e))
             
@@ -130,6 +137,7 @@ class MainWindow(QMainWindow):
                 self.right_panel_widget.view_model.save(zf)
                 self.left_panel_widget.view_model.save(zf)
                 self.save_action.setEnabled(False)
+                self.new_proj_action.setEnabled(True)
                 self.setWindowTitle(self.project_name)
         except ValueError as e:
             QMessageBox.critical(self, "Error", str(e))
@@ -150,6 +158,30 @@ class MainWindow(QMainWindow):
         self.project_name = meta_data["project_name"]
         self.file_path = meta_data["file_path"]
         self.setWindowTitle(self.project_name)
+
+    def __is_new_file__(self):
+        return not self.file_path
+
+    def __create_new__(self):
+        if self.save_action.isEnabled():
+            reply = QMessageBox.question(
+                self,
+                "Unsaved Changes",
+                "Your project hasn't been saved. Do you want to save before continuing?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel
+            )
+            if reply == QMessageBox.StandardButton.Cancel:
+                return
+            if reply == QMessageBox.StandardButton.Yes:
+                if self.__is_new_file__():
+                    self.__save_as__()
+                else:
+                    self.__save__()
+        self.project_name = "New Project"
+        self.file_path = ""
+        self.left_panel_widget.view_model.clear()
+        self.right_panel_widget.view_model.clear()
+                    
 
     def rearrange(self):
         if self.left_panel_widget.isChecked():

@@ -1,7 +1,5 @@
 from list_view_model import *
 from schematic_view_model import SchematicViewModel
-import pandas as pd
-import io
 import zipfile
 from PIL import Image
 
@@ -17,6 +15,9 @@ class LeftPanelViewModel:
 
     def get_sch_model(self):
         return self.sch_model
+    
+    def clear(self):
+        self.sch_model.clear()
 
 class RightPanelViewModel:
     def __init__(self):
@@ -32,6 +33,11 @@ class RightPanelViewModel:
         self.__wire_model__: WireListViewModel = wire_model
         self.__isolated_model__: UnusedListViewModel = isolated_model
         self.__grd_model__: GroundListViewModel = grd_model
+
+    def clear(self):
+        self.__wire_model__.clear()
+        self.__isolated_model__.clear()
+        self.__grd_model__.clear()
             
     def get_name(self):
         return self.__name__

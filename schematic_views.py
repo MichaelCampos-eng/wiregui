@@ -110,6 +110,7 @@ class SchematicView(QWidget):
 
     def __set_tool_bar__(self):
         img_label = self.view_model.get_image()
+        self.scroll_area.widget().deleteLater() if self.scroll_area.widget() else None
         self.scroll_area.setWidget(img_label)
         self.page_num.setText(f"Page {self.view_model.get_page_num()}")
     
