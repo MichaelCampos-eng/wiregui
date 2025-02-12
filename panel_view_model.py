@@ -3,17 +3,17 @@ from schematic_view_model import SchematicViewModel
 import pandas as pd
 import io
 import zipfile
-
+from PIL import Image
 
 class LeftPanelViewModel:
     def __init__(self):
-        self.sch_model = SchematicViewModel
+        self.sch_model = SchematicViewModel()
 
     def save(self, zf: zipfile.ZipFile):
         self.sch_model.save(zf)
 
-    def open(self, zf: zipfile.ZipFile):
-        pass
+    def open_images(self, imgs: List[Image.Image]):
+        self.sch_model.update_imgs(imgs)
 
     def get_sch_model(self):
         return self.sch_model
@@ -36,22 +36,19 @@ class RightPanelViewModel:
     def get_name(self):
         return self.__name__
     
+    def open_parquet(self, filename, file: zipfile.ZipExtFile):
+        if self.__wire_model__.get_name() in filename:
+            self.__wire_model__.open_parquet(file)
+        elif self.__isolated_model__.get_name() in filename:
+            self.__isolated_model__.open_parquet(file)
+        elif self.__grd_model__.get_name() in filename:
+            self.__grd_model__.open_parquet(file)
+    
     def save(self, zf: zipfile.ZipFile):
         try:
-            wire_buff = io.BytesIO()
-            wire_list: pd.DataFrame = self.__wire_model__.get_df()
-            wire_list.to_parquet(wire_buff, engine="pyarrow")
-            zf.writestr(self.__wire_model__.get_name(), wire_buff.getvalue())
-
-            iso_buff = io.BytesIO()
-            iso_list: pd.DataFrame = self.__isolated_model__.get_df()
-            iso_list.to_parquet(iso_buff, engine="pyarrow")
-            zf.writestr(self.__isolated_model__.get_name(), iso_buff.getvalue())
-
-            grd_buff = io.BytesIO()
-            grd_list: pd.DataFrame = self.__grd_model__.get_df()
-            grd_list.to_parquet(grd_buff, engine="pyarrow")
-            zf.writestr(self.__grd_model__.get_name(), grd_buff.getvalue())
+            self.__wire_model__.zip_parquet(zf)
+            self.__isolated_model__.zip_parquet(zf)
+            self.__grd_model__.zip_parquet(zf)
         except ValueError as e:
             raise e
 

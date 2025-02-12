@@ -20,6 +20,7 @@ class SchematicView(QWidget):
     def __init__(self, grandparent, view_model: SchematicViewModel):
         super().__init__()
         self.view_model: SchematicViewModel = view_model
+        self.view_model.data_changed.connect(self.__set_tool_bar__)
 
         layout = QVBoxLayout()
 

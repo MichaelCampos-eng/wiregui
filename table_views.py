@@ -21,6 +21,7 @@ class ListView(QWidget):
     def __init__(self, parent, model: ListViewModel):
         super().__init__()
         self.view_model: ListViewModel = model
+        self.view_model.data_changed.connect(self.__new_table_view__)
 
         main_layout = QVBoxLayout()
 
@@ -72,13 +73,19 @@ class ListView(QWidget):
     def __user_input__(self):
         try:
             self.view_model.append(self.user_input_box.text())
+            self.__new_table_view__()
+            self.view_changed.emit()
+        except ValueError as e:
+            QMessageBox.critical(self, "Input List Error", str(e))
+
+    def __new_table_view__(self):
+        try:
             self.model = PandasModel(self.view_model.get_df())
             self.table_view.setModel(self.model)
             self.table_view.scrollToBottom()
             self.__input_placeholder__()
-            self.view_changed.emit()
         except ValueError as e:
-            QMessageBox.critical(self, "Input List Error", str(e))
+            raise e
     
     def __input_placeholder__(self):
         self.user_input_box.clear()
@@ -86,9 +93,6 @@ class ListView(QWidget):
 
     def __toggle_table__(self):
         self.table_view.show() if self.check_box.isChecked() else self.table_view.hide()
-
-    def __setup_list_model__(self):
-        pass
 
     def __import_csv_dialog__(self):
         dialog = QFileDialog(self)

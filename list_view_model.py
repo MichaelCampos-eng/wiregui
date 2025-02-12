@@ -1,12 +1,16 @@
+from PyQt6.QtCore import QObject, pyqtSignal
 from wrman.conn_management.list_manager import *
 from wrman.config_classes.config import *
 from wrman.converter.ditmco_test import *
-
 from utils import *
+import zipfile
+import io
 
-class ListViewModel:
+class ListViewModel(QObject):
+    data_changed = pyqtSignal()
 
     def __init__(self):
+        super().__init__()
         self.__cfg__: Config
         self.__table__: DitmcoList
         self.__ro__: DitmcoRo
@@ -45,6 +49,17 @@ class ListViewModel:
             self.__table__.load_list(file_path)
         except ValueError as e:
             raise e
+        
+    def open_parquet(self, file: zipfile.ZipExtFile):
+        self.__table__.load_parquet(file)
+        self.data_changed.emit()
+
+    def zip_parquet(self, zf: zipfile.ZipFile):
+        buffer = io.BytesIO()
+        df: pd.DataFrame = self.get_df()
+        df.to_parquet(buffer, engine="pyarrow")
+        buffer.seek(0)
+        zf.writestr(f"{self.get_name()}.parquet", buffer.getvalue())
 
 class WireListViewModel(ListViewModel):
     def __init__(self):

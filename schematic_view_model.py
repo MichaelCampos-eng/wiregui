@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import (
     QLabel
 )
 from PyQt6.QtGui import QPixmap
+from PyQt6.QtCore import pyqtSignal, QObject
 
 from typing import List
 from PIL import ImageQt, Image
@@ -9,11 +10,13 @@ from pdf2image import convert_from_path
 import zipfile
 import io
 
-class SchematicViewModel():
+class SchematicViewModel(QObject):
+    data_changed = pyqtSignal()
     
     def __init__(self):
+        super().__init__()
         self.__index__ = 0
-        self.__pil_imgs__: List[Image.Image] = None
+        self.__pil_imgs__: List[Image.Image] = []
         self.__scale_factor__ = 1.0
 
     def save(self, zf: zipfile.ZipFile):
@@ -24,6 +27,12 @@ class SchematicViewModel():
                 zf.writestr(f"{index}.png", img_buffer.getvalue())
         except ValueError as e:
             raise e
+        
+    def update_imgs(self, imgs: List[Image.Image]):
+        self.__pil_imgs__ = imgs
+        self.__index__ = 0
+        self.__scale_factor__ = 1.0
+        self.data_changed.emit()
     
     def import_as_img(self, pdf_file_path: str):
         self.__pil_imgs__ = convert_from_path(pdf_file_path)
