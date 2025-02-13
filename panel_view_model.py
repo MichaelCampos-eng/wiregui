@@ -63,10 +63,13 @@ class RightPanelViewModel(QObject):
     def open_parquet(self, filename, file: zipfile.ZipExtFile):
         if self.__wire_model__.get_name() in filename:
             self.__wire_model__.open_parquet(file)
+            self.__ro__.set_wire_test(self.__wire_model__.get_test())
         elif self.__isolated_model__.get_name() in filename:
             self.__isolated_model__.open_parquet(file)
+            self.__ro__.set_iso_test(self.__isolated_model__.get_test())
         elif self.__grd_model__.get_name() in filename:
             self.__grd_model__.open_parquet(file)
+            self.__ro__.set_grd_test(self.__grd_model__.get_test())
     
     def save(self, zf: zipfile.ZipFile):
         try:

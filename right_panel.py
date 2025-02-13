@@ -38,19 +38,12 @@ class RightPanelView(QWidget):
         self.unused_list_view = UnusedListView(self, self.view_model.get_isolated_model())
         self.ground_list_view = GroundListView(self, self.view_model.get_grd_model())
 
-        self.wire_list_view.view_changed.connect(self.__view_changed__)
-        self.unused_list_view.view_changed.connect(self.__view_changed__)
-        self.ground_list_view.view_changed.connect(self.__view_changed__)
-
         right_panel_layout.addWidget(self.wire_list_view)
         right_panel_layout.addWidget(self.unused_list_view)
         right_panel_layout.addWidget(self.ground_list_view)
         right_panel_layout.addStretch()
 
         self.setLayout(right_panel_layout)
-
-    def __view_changed__(self):
-        self.view_changed.emit()
 
     def __export_csvs_dialog__(self):
         dialog = QFileDialog(self)

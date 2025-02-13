@@ -54,6 +54,7 @@ class ListViewModel(QObject):
         
     def open_parquet(self, file: zipfile.ZipExtFile):
         self.__table__.load_parquet(file)
+        self.__ro__.set_test(self.__cfg__, self.__table__.get_df())
         self.data_changed.emit()
 
     def zip_parquet(self, zf: zipfile.ZipFile):
