@@ -10,7 +10,6 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QFileDialog
 )
-from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QAction, QIcon
 from pandas_model import *
 from list_view_model import *

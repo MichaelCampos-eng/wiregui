@@ -1,0 +1,9 @@
+; Ground Tests
+BTB, GROUND_CONTINUITY_TESTS
+C, 0.1A, <2R, 0.01s
+X-fds
+CV-2
+CV-b
+C-lkj3
+ETB, GROUND_CONTINUITY_TESTS
+

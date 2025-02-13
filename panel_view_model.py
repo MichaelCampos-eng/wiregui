@@ -81,11 +81,11 @@ class RightPanelViewModel(QObject):
 
     def export_spreadsheets(self, folder_path: str):
         try:
-            if not self.__wire_model__.get_df().empty:
+            if not self.__wire_model__.is_table_empty():
                 self.__wire_model__.export_spreadsheet(folder_path + f"/{self.__wire_model__.get_name()}.csv" )
-            if not self.__isolated_model__.get_df().empty:
+            if not self.__isolated_model__.is_table_empty():
                 self.__isolated_model__.export_spreadsheet(folder_path + f"/{self.__isolated_model__.get_name()}.csv")
-            if not self.__grd_model__.get_df().empty:
+            if not self.__grd_model__.is_table_empty():
                 self.__grd_model__.export_spreadsheet(folder_path + f"/{self.__grd_model__.get_name()}.csv")
         except ValueError as e:
             raise e

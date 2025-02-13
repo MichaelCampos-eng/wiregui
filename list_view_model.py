@@ -17,12 +17,15 @@ class ListViewModel(QObject):
 
     def get_test(self):
         return self.__ro__.get_test()
+    
+    def is_table_empty(self):
+        return self.__table__.manager.is_df_empty()
              
     def get_df(self):
-        return self.__table__.get_df()
+        return self.__table__.manager.get_df()
     
     def get_name(self):
-        return self.__table__.get_list_name()
+        return self.__table__.manager.get_table_name()
     
     def get_placeholder(self):
         return self.__table__.fetch_hint_txt()
@@ -39,7 +42,7 @@ class ListViewModel(QObject):
 
     def export_spreadsheet(self, file_path):
         try:
-            if self.__table__.get_df().empty:
+            if self.__table__.manager.is_df_empty():
                 raise ValueError("Cannot export empty {}.".format(self.get_name()))
             self.__table__.save_list(file_path)
         except ValueError as e:
@@ -54,7 +57,6 @@ class ListViewModel(QObject):
         
     def open_parquet(self, file: zipfile.ZipExtFile):
         self.__table__.load_parquet(file)
-        self.__ro__.set_test(self.__cfg__, self.__table__.get_df())
         self.data_changed.emit()
 
     def zip_parquet(self, zf: zipfile.ZipFile):
@@ -76,7 +78,7 @@ class WireListViewModel(ListViewModel):
 
         self.__cfg__ = cfg
         self.__table__ = table
-        self.__ro__ = WireListRo(cfg, table.get_df())
+        self.__ro__ = WireListRo(cfg, table.manager)
 
 class UnusedListViewModel(ListViewModel):
     def __init__(self):
@@ -86,7 +88,7 @@ class UnusedListViewModel(ListViewModel):
 
         self.__cfg__ = cfg
         self.__table__ = table
-        self.__ro__ = UnusedListRo(cfg, table.get_df())
+        self.__ro__ = UnusedListRo(cfg, table.manager)
     
 
 class GroundListViewModel(ListViewModel):
@@ -97,4 +99,4 @@ class GroundListViewModel(ListViewModel):
 
         self.__cfg__ = cfg
         self.__table__ = table
-        self.__ro__ = GroundListRo(cfg, table.get_df())
+        self.__ro__ = GroundListRo(cfg, table.manager)

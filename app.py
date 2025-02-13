@@ -28,6 +28,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(self.view_model.get_name())
         self.resize(1000, 600)
         self.__set_menu_bar__()
+        self
     
         main_layout = QHBoxLayout()
 
@@ -113,10 +114,13 @@ class MainWindow(QMainWindow):
 
     def __save__(self):
         try:
-            self.view_model.save()
-            self.save_action.setEnabled(False)
-            self.new_proj_action.setEnabled(True)
-            self.setWindowTitle(self.view_model.get_name())
+            if self.view_model.is_new_file():
+                self.__save_as__()
+            else:   
+                self.view_model.save()
+                self.save_action.setEnabled(False)
+                self.new_proj_action.setEnabled(True)
+                self.setWindowTitle(self.view_model.get_name())
         except ValueError as e:
             QMessageBox.critical(self, "Error", str(e))
 
@@ -153,6 +157,19 @@ class MainWindow(QMainWindow):
             self.splitter.setStretchFactor(0, 1)
             self.splitter.setStretchFactor(1, 10)
             self.resize(300, 600)
+
+    def closeEvent(self, event):
+        if self.save_action.isEnabled():
+            reply = QMessageBox.question(self, "Unsaved Changes",
+                                            "Your project hasn't been saved. Do you want to save before closing?",
+                                            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, 
+                                            QMessageBox.StandardButton.No)
+
+            if reply == QMessageBox.StandardButton.Yes:
+                self.__save_as__()
+                event.accept()  # Accept the close event and close the window
+            else:
+                event.accept()
 
 app = QApplication(sys.argv)
 window = MainWindow()
