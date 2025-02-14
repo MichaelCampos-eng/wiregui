@@ -1,5 +1,4 @@
-from PyQt6.QtWidgets import ( 
-    QApplication, 
+from PyQt6.QtWidgets import (  
     QMainWindow, 
     QWidget,
     QHBoxLayout,
@@ -7,14 +6,12 @@ from PyQt6.QtWidgets import (
     QFileDialog,
     QMessageBox
 )
-from nexport.view_models.main_view_model import MainViewModel
 from PyQt6.QtGui import QAction, QIcon, QKeySequence
 from PyQt6.QtCore import Qt
 
-from nexport.views.right_panel import RightPanelView
-from nexport.views.left_panel import LeftPanelView
-
-import sys
+from ..view_models.main_view_model import MainViewModel
+from .right_panel import RightPanelView
+from .left_panel import LeftPanelView
 
 class MainWindow(QMainWindow):
 
@@ -169,8 +166,3 @@ class MainWindow(QMainWindow):
                 event.accept()  # Accept the close event and close the window
             else:
                 event.accept()
-
-app = QApplication(sys.argv)
-window = MainWindow()
-window.show()
-app.exec()

@@ -11,8 +11,8 @@ from PyQt6.QtWidgets import (
     QFileDialog
 )
 from PyQt6.QtGui import QAction, QIcon
-from nexport.model.pandas_model import *
-from nexport.view_models.list_view_model import *
+from ..model.pandas_model import *
+from ..view_models.list_view_model import *
 
 class ListView(QWidget):
     
