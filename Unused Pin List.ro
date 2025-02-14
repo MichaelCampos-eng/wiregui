@@ -1,8 +1,0 @@
-; Unused Pins Tests
-BTB, ISOLATION_TESTS
-T, 500V, >2M, 0.15T, 0.3s
-T-asf-a
-T-asf-b
-T-asf-c
-ETB, ISOLATION_TESTS
-

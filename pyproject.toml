@@ -1,0 +1,23 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.setuptools]
+packages = ["nexport"]
+
+[project]
+name = "nexport"
+version = "1.0"
+description = "A module that maps harness connections and pins"
+authors = [{name = "Michael Campos", email = "michael_c55@berkeley.edu"}]
+maintainers = [{name = "Michael Campos", email = "michael_c55@berkeley.edu"}]
+dependencies = [
+    "qtawesome",
+    "pandas",
+    "pdf2image",
+    "PyQt6",
+     "wrman @ git+https://github.com/MichaelCampos-eng/ro_creator.git"]
+
+[project.urls]
+Repository = "https://github.com/MichaelCampos-eng/wiregui"

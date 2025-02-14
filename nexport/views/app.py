@@ -7,15 +7,14 @@ from PyQt6.QtWidgets import (
     QFileDialog,
     QMessageBox
 )
-from main_view_model import MainViewModel
+from nexport.view_models.main_view_model import MainViewModel
 from PyQt6.QtGui import QAction, QIcon, QKeySequence
 from PyQt6.QtCore import Qt
 
-from right_panel import RightPanelView
-from left_panel import LeftPanelView
+from nexport.views.right_panel import RightPanelView
+from nexport.views.left_panel import LeftPanelView
 
 import sys
-import os
 
 class MainWindow(QMainWindow):
 

@@ -1,0 +1,11 @@
+Metadata-Version: 2.2
+Name: nexport
+Version: 1.0
+Summary: A module that maps harness connections and pins
+Author-email: Michael Campos <michael_c55@berkeley.edu>
+Maintainer-email: Michael Campos <michael_c55@berkeley.edu>
+Project-URL: Repository, https://github.com/MichaelCampos-eng/wiregui
+Requires-Dist: qtawesome
+Requires-Dist: pandas
+Requires-Dist: pdf2image
+Requires-Dist: PyQt6

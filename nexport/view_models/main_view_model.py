@@ -3,7 +3,7 @@ import zipfile
 import json
 import io
 import os
-from panel_view_model import *
+from nexport.view_models.panel_view_model import *
 
 class MainViewModel(QObject):
     data_changed = pyqtSignal()

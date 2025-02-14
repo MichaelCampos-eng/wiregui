@@ -1,0 +1,4 @@
+qtawesome
+pandas
+pdf2image
+PyQt6
