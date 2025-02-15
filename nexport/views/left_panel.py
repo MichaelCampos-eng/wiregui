@@ -3,8 +3,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout
 )
 
-from ..views.schematic_views import *
-from ..view_models.panel_view_model import LeftPanelViewModel
+from nexport.views.schematic_views import *
+from nexport.view_models.panel_view_model import LeftPanelViewModel
 
 class LeftPanelView(QWidget):
 

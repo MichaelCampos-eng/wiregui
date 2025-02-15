@@ -6,8 +6,8 @@ from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QAction, QIcon
 from wrman.converter.ditmco_test import *
 from wrman.conn_management.list_manager import *
-from ..views.table_views import *
-from ..view_models.panel_view_model import RightPanelViewModel
+from nexport.views.table_views import *
+from nexport.view_models.panel_view_model import RightPanelViewModel
 
 class RightPanelView(QWidget):
     view_changed = pyqtSignal()

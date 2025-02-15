@@ -1,6 +1,6 @@
 from PyQt6.QtCore import pyqtSignal, QObject
-from ..view_models.list_view_model import *
-from ..view_models.schematic_view_model import SchematicViewModel
+from nexport.view_models.list_view_model import *
+from nexport.view_models.schematic_view_model import SchematicViewModel
 import zipfile
 from PIL import Image
 

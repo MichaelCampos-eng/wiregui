@@ -2,7 +2,7 @@ from PyQt6.QtCore import QObject, pyqtSignal
 from wrman.conn_management.list_manager import *
 from wrman.config_classes.config import *
 from wrman.converter.ditmco_test import *
-from ..utils.utils import *
+from nexport.utils.utils import *
 import zipfile
 import io
 

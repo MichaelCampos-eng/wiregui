@@ -5,11 +5,11 @@ import os
 
 def get_config_path():
     if getattr(sys, 'frozen', False):  # Running as a PyInstaller bundle
-        bundle_dir = sys._MEIPASS  # Extracted temp directory
+        bundle_dir = sys._MEIPASS
+        return os.path.join(bundle_dir, 'nexport', 'utils', 'config.yaml')
     else:
-        bundle_dir = os.path.dirname(os.path.abspath(__file__))  # Normal script mode
-
-    return os.path.join(bundle_dir, 'nexport', 'utils', 'config.yaml')
+        bundle_dir = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(bundle_dir, "config.yaml")
 
 config_path = get_config_path()
 

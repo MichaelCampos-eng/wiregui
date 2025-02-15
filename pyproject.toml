@@ -17,7 +17,7 @@ dependencies = [
     "pandas",
     "pdf2image",
     "PyQt6",
-     "wrman @ git+https://github.com/MichaelCampos-eng/ro_creator.git"]
+    "wrman @ git+https://github.com/MichaelCampos-eng/ro_creator.git"]
 
 [project.urls]
 Repository = "https://github.com/MichaelCampos-eng/wiregui"

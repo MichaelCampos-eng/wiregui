@@ -9,9 +9,9 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QAction, QIcon, QKeySequence
 from PyQt6.QtCore import Qt
 
-from ..view_models.main_view_model import MainViewModel
-from .right_panel import RightPanelView
-from .left_panel import LeftPanelView
+from nexport.view_models.main_view_model import MainViewModel
+from nexport.views.right_panel import RightPanelView
+from nexport.views.left_panel import LeftPanelView
 
 class MainWindow(QMainWindow):
 
