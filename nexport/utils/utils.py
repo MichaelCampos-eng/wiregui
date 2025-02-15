@@ -3,8 +3,15 @@ from wrman.config_classes.config import *
 import sys
 import os
 
-bundle_dir = os.path.dirname(sys.executable)
-config_path = os.path.join(bundle_dir, 'nexport', 'utils', 'config.yaml')
+def get_config_path():
+    if getattr(sys, 'frozen', False):  # Running as a PyInstaller bundle
+        bundle_dir = sys._MEIPASS  # Extracted temp directory
+    else:
+        bundle_dir = os.path.dirname(os.path.abspath(__file__))  # Normal script mode
+
+    return os.path.join(bundle_dir, 'nexport', 'utils', 'config.yaml')
+
+config_path = get_config_path()
 
 def open_config(file_path):
     try:
