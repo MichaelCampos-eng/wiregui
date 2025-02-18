@@ -1,0 +1,19 @@
+continuity_cfg:
+  execute: True
+  block_name: CONTINUITY_TESTS
+  params: C, 0.1A, <2R, 0.01s
+
+leakage_cfg:
+  execute: True
+  block_name: LEAKAGE_TESTS
+  params: T 500V ROFF >10M 0.010T 0.020S
+
+isolation_cfg:
+  execute: True
+  block_name: ISOLATION_TESTS
+  params: T, 500V, >2M, 0.15T, 0.3s
+
+hipot_cfg:
+  execute: True
+  block_name: HIPOT_TESTS
+  params: D HIP 500V 0.5MA ROFF 0.010T 0.020S

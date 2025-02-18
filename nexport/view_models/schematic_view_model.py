@@ -4,9 +4,9 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import pyqtSignal, QObject
 
-from typing import List
-from PIL import ImageQt, Image
 from pdf2image import convert_from_path
+from PIL import ImageQt, Image
+from typing import List
 import zipfile
 import io
 

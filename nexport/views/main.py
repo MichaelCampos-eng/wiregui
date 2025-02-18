@@ -24,7 +24,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(self.view_model.get_name())
         self.resize(1000, 600)
         self.__set_menu_bar__()
-        self
     
         main_layout = QHBoxLayout()
 
