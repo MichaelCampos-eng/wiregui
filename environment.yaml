@@ -1,0 +1,8 @@
+name: nexport_gui
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - poppler  # Install poppler from conda-forge
+  - pyinstaller

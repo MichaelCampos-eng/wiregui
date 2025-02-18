@@ -136,7 +136,8 @@ class SchematicView(QWidget):
                                               "Open schematic",
                                               "",
                                               "PDF Files (*.pdf)")
-        try:
-            self.__import_schematic__(path=file_path)
-        except ValueError as e:
-            QMessageBox.critical(self, "Error", str(e))
+        if file_path:
+            try:
+                self.__import_schematic__(path=file_path)
+            except ValueError as e:
+                QMessageBox.critical(self, "Error", str(e))

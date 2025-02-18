@@ -4,7 +4,7 @@
 a = Analysis(
     ['start.py'],
     pathex=[],
-    binaries=[],
+    binaries=[(r'C:\Users\mcampos\AppData\Local\miniconda3\envs\gui_sch\Library\bin\pdftoppm.exe', 'pdftoppm.exe')],
     datas=[('nexport/utils/config.yaml', 'nexport/utils')],
     hiddenimports=[],
     hookspath=[],
@@ -14,6 +14,7 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
+
 pyz = PYZ(a.pure)
 
 exe = EXE(
@@ -33,15 +34,17 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
-coll = COLLECT(
-    exe,
+
+coll = COLLECT(exe,
     a.binaries,
+    a.zipfiles,
     a.datas,
     strip=False,
     upx=True,
     upx_exclude=[],
     name='nexport',
 )
+
 app = BUNDLE(
     coll,
     name='nexport.app',
