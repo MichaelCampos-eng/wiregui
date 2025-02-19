@@ -9,32 +9,17 @@
 -->
 
 
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Issues][issues-shield]][issues-url]
-[![project_license][license-shield]][LICENCE.txt]
-
-
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/MichaelCampos-eng/wiregui">
+    <img src="images/icons8-gui-96.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">NeXport</h3>
 
   <p align="center">
-    Wire manager GUI that maps connections and connectors for DITMCO testing.  
+    GUI wire manager that maps connections and connectors for DITMCO testing.  
     <br />
     <a href="https://github.com/MichaelCampos-eng/wiregui.git"><strong>Explore the docs »</strong></a>
     <br />
@@ -79,9 +64,15 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+<div align="center">
+  <a href="https://github.com/MichaelCampos-eng/wiregui">
+    <img src="images/example.png" alt="Example">
+  </a>
+</div>
 
-Here's a blank template to get started. To avoid retyping too much info, do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`, `project_license`
+Although DITMCO NETS program can produce test scripts with various parameters given a wire list, the goal of this
+project is to help the operator with creating several types of lists and/or producing list specific test scripts.
+The program is a quick tool that allows the operator to view the schematic and insert mappings for each list simultaneously, handling duplicate mappings and displaying easy to read tables. 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -89,7 +80,7 @@ Here's a blank template to get started. To avoid retyping too much info, do a se
 
 ### Built With
 
-* [![PyQt6][PyQt]][PyQt6.com]
+* [![PyQt6][PyQt6]][PyQt6-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -98,8 +89,8 @@ Here's a blank template to get started. To avoid retyping too much info, do a se
 <!-- GETTING STARTED -->
 ## Getting Started
 
-The package requires several main stream packages as well as a custom library. A YAML file for conda env
-creation and TOML file for packages installion help 
+The package requires several main stream packages as well as a custom library. A YAML file for conda environment
+creation and a TOML file for dependencies installation are used to configure the GUI.
 
 ### Prerequisites
 
@@ -110,8 +101,8 @@ Install git for Windows [https://git-scm.com/downloads/win]
   winget install --id Git.Git -e --source winget
   ```
 
-Install miniconda for Windows, other OS or more detailed instructions found at [https://docs.anaconda.com/miniconda/install/]
-* Miniconda for Windows
+Install miniconda for Windows [https://docs.anaconda.com/miniconda/install/]
+* Miniconda installation using Powershell
   ```sh
   curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -o .\miniconda.exe
   start /wait "" .\miniconda.exe /S
@@ -152,37 +143,39 @@ For each table shown, the user input text boxes show the format the user need to
     a. 'FROM' (SPACE) 'PIN' correlates to typing in reference designator followed by space followed by pin, press enter when complete
     b. 'TO' (SPACE) 'PIN' correlates to typing in reference designator followed by space followed by pin, press enter when complete
   
-  2. Unused List: 'REF DES' (SPACE) 'PIN' correlates to typing in reference designator followed by space followed by pin, press enter when complete
+  2. Unused List: 'REF DES' (SPACE) 'PIN' correlates to typing in reference designator for an unused pin followed by space followed by pin, press enter when complete
 
   3. Ground List:
     a. "Connector" correlates to typing in the harness/adapter reference designator, press enter when complete
-    b. "Ground" correlates to typing in associated ground reference designator, press enter when complete
+    b. "Ground" correlates to typing in associated ground reference designator to be attached to 'Connector', press enter when complete
 
 To remove an entry from list, type REMOVE 'INDEX_NUMBER'
 
 There a 3 tab menus: File, Import, Export
 
-1) File
-  a. Open
-    i. 'Open Project' feature that opens file (.tb) containing all list and image schematic data
-    ii. 'Open Document' feature that opens schematic (.pdf)
-    iii. 'Open image' idle feature that opens schematic (.png)
-2) Import
-  a. Spreadsheet
-    i. 'Wire List' opens csv file with appropriate column names and displays it on table
-    ii. 'Unused List' opens csv file with appropriate column names and displays it on table
-    iii. 'Ground list' opens csv file with appropriate column names and displays it on table
-3) Export
-  a. Spreadsheet
-    i. 'Wire List' saves csv file
-    ii. 'Unused List' saves csv file
-    iii. 'Ground list' saves csv file
-    iv. 'All' saves all lists as csvs in a directory
-  b. Test
-    i. 'Wire List' creates test script for list
-    ii. 'Unused List' creates test script for list
-    iii. 'Ground list' creates test script for list
-    iv. 'All' creates a single test script for all lists
+1. File
+    * Open
+      - 'Open Project' feature that opens file (.tb) containing all list and image schematic data
+      - 'Open Document' feature that opens schematic (.pdf)
+      - 'Open image' idle feature that opens schematic (.png)
+    * 'Save As' creates a project file (.tb) containing schematic and data contents
+    * 'Save' saves progress into current project file (.tb)
+2. Import
+    * Spreadsheet
+      - 'Wire List' opens csv file with appropriate column names: ["FROM", "PIN", "TO", "PIN"] and displays it on table
+      - 'Unused List' opens csv file with appropriate column names: ["CONNECTOR", "PIN"] and displays it on table
+      - 'Ground list' opens csv file with appropriate column names: ["CONNECTOR", "GROUND"] and displays it on table
+3. Export
+    * Spreadsheet
+      - 'Wire List' saves wire list as csv file with column names: ["FROM", "PIN", "TO", "PIN"]
+      - 'Unused List' saves unused pins list as csv file with column names: ["CONNECTOR", "PIN"]
+      - 'Ground list' saves ground list as csv file with column names: ["CONNECTOR", "GROUND"]
+      - 'All' saves all lists as csvs in a directory
+    * Test
+      - 'Wire List' creates test script for list
+      - 'Unused List' creates test script for list
+      - 'Ground list' creates test script for list
+      - 'All' creates a single test script for all lists
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -198,8 +191,7 @@ There a 3 tab menus: File, Import, Export
     - [ ] In-place entry manipulation
 - [ ] Wire Detection
     - [X] Import and convert pdf schematic to image
-    - [ ] Detect wire connections
-    - [ ] Maps pins to reference designators
+    - [ ] Detect wire connections 
     - [ ] Appends connector-pin to wire list upon clicking on wire
 - [ ] Automated Net List Creation
     - [ ] Implementation of object detection to identify all components and location
@@ -251,17 +243,36 @@ Project Link: [https://github.com/MichaelCampos-eng/wiregui.git](https://github.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
+[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
+[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
+[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
+[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
+[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
+[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
+[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
+[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot]: images/screenshot.png
-[PyQt6]: https://img.shields.io/pypi/pyversions/:packageName
-[PyQt6.com]: https://doc.qt.io/qtforpython-6/
+[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
+[Next-url]: https://nextjs.org/
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[Vue-url]: https://vuejs.org/
+[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]: https://angular.io/
+[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
+[Svelte-url]: https://svelte.dev/
+[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
+[Laravel-url]: https://laravel.com
+[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
+[Bootstrap-url]: https://getbootstrap.com
+[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
+[JQuery-url]: https://jquery.com 
+
+[PyQt6]: https://img.shields.io/conda/:variant/:channel/PyQt6
+[PyQt6-url]: https://doc.qt.io/qtforpython-6/
 

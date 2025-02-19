@@ -105,6 +105,8 @@ class MainWindow(QMainWindow):
                                               "TB Files (*.tb)")
         if file_path:
             self.view_model.save_as(file_path)
+            self.save_action.setEnabled(False)
+            self.new_proj_action.setEnabled(True)
             self.setWindowTitle(self.view_model.get_name())
 
     def __save__(self):

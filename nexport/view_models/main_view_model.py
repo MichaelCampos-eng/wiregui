@@ -29,10 +29,7 @@ class MainViewModel(QObject):
         return self.__left_panel_model__
 
     def get_name(self):
-        return self.__project_name__
-    
-    def get_file_path(self):
-        return self.__file_path__
+        return "NeXport | " + self.__project_name__
     
     def is_new_file(self):
         return not self.__file_path__
@@ -45,8 +42,8 @@ class MainViewModel(QObject):
     
     def save_meta_data(self, zf: zipfile.ZipFile):
         meta_data = {
-            "project_name": self.get_name(),
-            "file_path": self.get_file_path()
+            "project_name": self.__project_name__,
+            "file_path": self.__file_path__
         }
         json_str = json.dumps(meta_data, indent=4)
         buffer = io.BytesIO()
@@ -60,7 +57,7 @@ class MainViewModel(QObject):
         self.__file_path__ = meta_data["file_path"]
 
     def save(self):
-        with zipfile.ZipFile(self.get_file_path(), "w") as zf:
+        with zipfile.ZipFile(self.__file_path__, "w") as zf:
                 self.save_meta_data(zf)
                 self.__left_panel_model__.save(zf)
                 self.__right_panel_model__.save(zf)
@@ -71,7 +68,7 @@ class MainViewModel(QObject):
             self.update_file_path(file_path)
             self.save()
         else:
-            orig_path = self.get_file_path()
+            orig_path = self.__file_path__
             orig_name = self.get_name()
             self.update_file_path(file_path)
             self.update_name(file_path)
