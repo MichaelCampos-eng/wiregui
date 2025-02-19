@@ -19,7 +19,7 @@
 <h3 align="center">NeXport</h3>
 
   <p align="center">
-    GUI wire manager that maps connections and connectors for DITMCO testing.  
+    GUI wire manager that maps pins and connectors for DITMCO testing.  
     <br />
     <a href="https://github.com/MichaelCampos-eng/wiregui.git"><strong>Explore the docs »</strong></a>
     <br />
