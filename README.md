@@ -80,7 +80,7 @@ The program is a quick tool that allows the operator to view the schematic and i
 
 ### Built With
 
-* [![PyQt6][PyQt6]][PyQt6-url]
+[![PyQt6]][PyQt6-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -273,6 +273,6 @@ Project Link: [https://github.com/MichaelCampos-eng/wiregui.git](https://github.
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
 
-[PyQt6]: https://img.shields.io/conda/:variant/:channel/PyQt6
+[PyQt6]: https://img.shields.io/badge/PyQt6-6.8.1-blue
 [PyQt6-url]: https://doc.qt.io/qtforpython-6/
 
