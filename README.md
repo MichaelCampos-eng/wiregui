@@ -109,6 +109,12 @@ Install miniconda for Windows [https://docs.anaconda.com/miniconda/install/]
   del .\miniconda.exe
   ```
 
+If using Linux, must install wayland
+* Wayland installation using Bash
+  ```sh
+  sudo apt install qtwayland5
+  ```
+
 ### Installation
 
 1. Clone the repo
